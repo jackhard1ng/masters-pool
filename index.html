@@ -328,6 +328,71 @@
     color: var(--ivory-dim);
     font-style: italic;
   }
+
+  /* ───────────────────── Admin score list (no accordion) ───────────────────── */
+  .score-list {
+    margin-top: 16px;
+    border: 1px solid var(--white-line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .score-row {
+    display: grid;
+    grid-template-columns: 1fr 110px 70px 110px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--white-line);
+    background: rgba(0,0,0,0.18);
+  }
+  .score-row:last-child { border-bottom: none; }
+  .score-row:nth-child(even) { background: rgba(0,0,0,0.30); }
+  .score-row.is-cut { opacity: 0.55; }
+  .score-row .sr-name {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ivory);
+  }
+  .score-row .sr-name small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ivory-faint);
+    margin-top: 2px;
+  }
+  .score-row .sr-input input {
+    width: 100%;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 6px;
+  }
+  .score-row .sr-display {
+    font-family: var(--serif-display);
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--ivory);
+    font-variant-numeric: tabular-nums;
+  }
+  .score-row .sr-display.under { color: var(--red-under); }
+  .score-row .sr-cut {
+    padding: 7px 10px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+  @media (max-width: 640px) {
+    .score-row {
+      grid-template-columns: 1fr 90px;
+      gap: 8px;
+    }
+    .score-row .sr-display, .score-row .sr-cut {
+      grid-column: span 1;
+    }
+  }
   .ready-warning strong {
     font-family: var(--sans);
     font-size: 11px;
@@ -376,6 +441,93 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     font-weight: 500;
+  }
+
+  /* ───────────────────── Wheel of fortune (draft order reveal) ───────────────────── */
+  .wheel-overlay {
+    padding: 24px;
+  }
+  .wheel-pick-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+  }
+  .wheel-stage {
+    position: relative;
+    width: min(78vmin, 560px);
+    height: min(78vmin, 560px);
+  }
+  .wheel-pointer {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-top: 30px solid var(--gold);
+    z-index: 4;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+  }
+  .wheel-rotor {
+    position: absolute;
+    inset: 0;
+    transform: rotate(0deg);
+    animation: wheelSpin var(--spin-duration, 3s) cubic-bezier(0.16, 0.71, 0.21, 0.99) forwards;
+    transform-origin: 50% 50%;
+  }
+  .wheel-rotor .wheel-svg { width: 100%; height: 100%; display: block; }
+  @keyframes wheelSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(var(--final-rot, 720deg)); }
+  }
+  .wheel-hub {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px;
+    text-align: center;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .wheel-hub .hub-eyebrow {
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2px;
+  }
+  .wheel-hub .hub-name {
+    font-family: var(--serif-display);
+    font-size: 13px;
+    color: var(--ivory);
+    line-height: 1.1;
+  }
+  .wheel-revealed {
+    margin-top: 22px;
+    font-family: var(--serif-display);
+    font-size: 30px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-shadow: 0 0 26px rgba(253,185,19,0.4);
+    opacity: 0;
+    animation: revealFade 1s ease-out forwards;
+    animation-delay: var(--spin-duration, 3s);
+    min-height: 38px;
+  }
+  @keyframes revealFade {
+    from { opacity: 0; transform: translateY(8px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wheel-rotor { animation: none; transform: rotate(var(--final-rot, 0deg)); }
+    .wheel-revealed { animation: none; opacity: 1; }
   }
 
   /* ───────────────────── Tabs ───────────────────── */
@@ -514,23 +666,15 @@
   }
   .golfer-row {
     display: grid;
-    grid-template-columns: 36px 1fr 60px 90px;
+    grid-template-columns: 1fr 110px;
     align-items: center;
-    padding: 11px 14px;
+    padding: 11px 16px;
     border-bottom: 1px solid var(--white-line);
     gap: 10px;
   }
   .golfer-row:last-child { border-bottom: none; }
   .golfer-row.taken { opacity: 0.32; }
-  .golfer-row .tier {
-    font-family: var(--serif);
-    font-size: 11px;
-    color: var(--gold);
-    font-weight: 600;
-    letter-spacing: 0.1em;
-  }
   .golfer-row .gname { font-family: var(--serif); font-size: 17px; }
-  .golfer-row .odds { font-size: 11px; color: var(--ivory-faint); text-align: right; font-variant-numeric: tabular-nums; }
   .golfer-row button { padding: 6px 12px; font-size: 10px; letter-spacing: 0.12em; }
   .golfer-row .owner-pill {
     font-size: 9px;
@@ -823,8 +967,7 @@
     .lb-row .nm { font-size: 16px; }
     .lb-row .score { font-size: 18px; }
     .panel { padding: 18px; }
-    .golfer-row { grid-template-columns: 30px 1fr 80px; }
-    .golfer-row .odds { display: none; }
+    .golfer-row { grid-template-columns: 1fr 90px; padding: 11px 12px; }
   }
 </style>
 </head>
@@ -871,8 +1014,9 @@ const ROOT = db.ref('masters/2026');
 ═══════════════════════════════════════════════════════════════════════ */
 const TEAM_SIZE = 6;
 const PICK_TIMER = 30;
-const READY_COUNTDOWN = 15;
-const RANDOMIZER_DURATION = 10;
+const READY_COUNTDOWN = 10;
+const SPIN_DURATION_MS = 3000;     // wheel spin animation
+const SPIN_PAUSE_MS    = 1100;     // pause after each spin reveals a name
 const ADMIN_KEY = 'masters2026';
 const AUGUSTA_PARS = [4,5,4,3,4,3,4,5,4,4,4,3,5,4,5,3,4,4]; // par 72
 const PAR_TOTAL = 72;
@@ -988,13 +1132,12 @@ let state = {
   status: 'waiting',        // waiting | drafting | complete
   players: {},              // {id: {name, joinedAt, ready, order}}
   draftState: null,         // {order, currentPick, picks, timerEnd, paused}
-  scores: {},               // {golferId: {mode, total, cut, rounds}}
+  scores: {},               // {golferId: {total, cut}}
   commissioner: null,
-  tab: 'draft',             // draft | leaderboard | admin
+  tab: 'leaderboard',       // leaderboard | draft | admin
   lbView: 'pool',           // pool | golfers | teams
-  filterTier: 'all',        // all | 1..6
   hideTaken: true,
-  countdownActive: false,
+  lastStatus: null,         // for detecting status transitions
 };
 const isAdmin = new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
 
@@ -1014,21 +1157,6 @@ function getGolferScore(golferId) {
   const s = state.scores[golferId];
   if (!s) return null;
   if (s.cut) return MISSED_CUT_SCORE;
-  if (s.mode === 'holes' && s.rounds) {
-    let total = 0, anyHoles = false;
-    for (let r = 1; r <= 4; r++) {
-      const round = s.rounds[r];
-      if (!round || !round.holes) continue;
-      for (let h = 1; h <= 18; h++) {
-        const stroke = round.holes[h];
-        if (typeof stroke === 'number' && stroke > 0) {
-          total += stroke - AUGUSTA_PARS[h-1];
-          anyHoles = true;
-        }
-      }
-    }
-    return anyHoles ? total : null;
-  }
   if (typeof s.total === 'number') return s.total;
   return null;
 }
@@ -1218,33 +1346,63 @@ function resetPool() {
 }
 
 function startDraftCountdown() {
-  // Build initial draft order (will be randomized after countdown)
+  // Build a fully shuffled draft order up front. The wheel just reveals it.
   const playerIds = Object.keys(state.players);
   if (playerIds.length < 2) { alert('Need at least 2 players'); return; }
+  const draftOrder = [...playerIds];
+  for (let i = draftOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [draftOrder[i], draftOrder[j]] = [draftOrder[j], draftOrder[i]];
+  }
+
   ROOT.child('status').set('countdown');
   ROOT.child('draftState').set({
     countdownStart: Date.now(),
-    countdownPhase: 'ready',  // ready -> randomizing -> done
-    order: playerIds,
+    countdownPhase: 'ready',   // ready -> wheel -> done
+    draftOrder,
+    spinIndex: 0,
     currentPick: 0,
     picks: {},
   });
-  // After 15s, start randomizer
-  setTimeout(() => {
-    ROOT.child('draftState/countdownPhase').set('randomizing');
-    setTimeout(() => {
-      // Randomize order
-      const ids = Object.keys(state.players);
-      for (let i = ids.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [ids[i], ids[j]] = [ids[j], ids[i]];
-      }
-      ROOT.child('draftState/order').set(ids);
-      ROOT.child('draftState/countdownPhase').set('done');
-      ROOT.child('status').set('drafting');
-      ROOT.child('draftState/timerEnd').set(Date.now() + PICK_TIMER * 1000);
-    }, RANDOMIZER_DURATION * 1000);
-  }, READY_COUNTDOWN * 1000);
+
+  // After the ready countdown, kick off the wheel reveal.
+  setTimeout(() => beginWheelPhase(draftOrder), READY_COUNTDOWN * 1000);
+}
+
+function beginWheelPhase(draftOrder) {
+  ROOT.child('draftState/countdownPhase').set('wheel');
+  runWheelSpin(0, draftOrder);
+}
+
+function runWheelSpin(idx, draftOrder) {
+  if (idx >= draftOrder.length) {
+    // All picks revealed — start the actual draft.
+    ROOT.child('draftState/order').set(draftOrder);
+    ROOT.child('draftState/wheel').remove();
+    ROOT.child('draftState/countdownPhase').set('done');
+    ROOT.child('status').set('drafting');
+    ROOT.child('draftState/timerEnd').set(Date.now() + PICK_TIMER * 1000);
+    return;
+  }
+  const remaining = draftOrder.slice(idx);
+  // Shuffle the visible wheel arrangement so the target lands somewhere new each spin
+  const wheel = [...remaining];
+  for (let i = wheel.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [wheel[i], wheel[j]] = [wheel[j], wheel[i]];
+  }
+  const targetId = draftOrder[idx];
+  const targetIdx = wheel.indexOf(targetId);
+
+  ROOT.child('draftState/wheel').set({
+    players: wheel,
+    targetIdx,
+    pickNumber: idx + 1,
+    startTime: Date.now()
+  });
+  ROOT.child('draftState/spinIndex').set(idx);
+
+  setTimeout(() => runWheelSpin(idx + 1, draftOrder), SPIN_DURATION_MS + SPIN_PAUSE_MS);
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -1316,9 +1474,18 @@ let lastTimerCheck = 0;
 function startTimerLoop() {
   if (timerInterval) return;
   timerInterval = setInterval(() => {
-    if (state.status !== 'drafting' || !state.draftState) return;
     const ds = state.draftState;
+    if (!ds) return;
+
+    // Pre-draft countdown overlay (ready phase + wheel phase)
+    if (state.status === 'countdown' && ds.countdownStart) {
+      updateCountdownOverlay();
+      return;
+    }
+
+    if (state.status !== 'drafting') return;
     if (!ds.timerEnd) return;
+
     const remaining = Math.max(0, Math.ceil((ds.timerEnd - Date.now()) / 1000));
     const el = document.getElementById('pickTimer');
     if (el) {
@@ -1330,57 +1497,31 @@ function startTimerLoop() {
       lastTimerCheck = Date.now();
       autoPick();
     }
-    // Countdown overlay updates
-    if (state.status === 'countdown' && ds.countdownStart) {
-      updateCountdownOverlay();
-    }
   }, 250);
 }
 
 function updateCountdownOverlay() {
   const ds = state.draftState;
   if (!ds || !ds.countdownStart) return;
+  if (ds.countdownPhase !== 'ready') return; // wheel phase has its own DOM
   const elapsed = (Date.now() - ds.countdownStart) / 1000;
-  const overlay = document.getElementById('countdownOverlay');
-  if (!overlay) return;
-  const numEl = overlay.querySelector('.num');
-  const labelEl = overlay.querySelector('.label');
-  const rouletteEl = overlay.querySelector('.roulette');
-
-  if (ds.countdownPhase === 'ready') {
-    const remaining = Math.max(0, Math.ceil(READY_COUNTDOWN - elapsed));
-    labelEl.textContent = 'Draft Begins In';
-    numEl.textContent = remaining;
-    rouletteEl.textContent = 'Get Ready';
-  } else if (ds.countdownPhase === 'randomizing') {
-    labelEl.textContent = 'Randomizing Draft Order';
-    numEl.textContent = '';
-    // Cycle through names
-    const names = Object.values(state.players).map(p => p.displayName || p.name);
-    const idx = Math.floor(Date.now() / 100) % names.length;
-    rouletteEl.textContent = names[idx] || '';
-  }
+  const numEl = document.getElementById('countdownNum');
+  if (!numEl) return;
+  const remaining = Math.max(0, Math.ceil(READY_COUNTDOWN - elapsed));
+  numEl.textContent = remaining;
 }
 
 /* ════════════════════════════════════════════════════════════════════
    SCORE ENTRY (admin)
 ═══════════════════════════════════════════════════════════════════════ */
-function setScoreMode(golferId, mode) {
-  ROOT.child('scores/' + golferId + '/mode').set(mode);
-}
 function setTotalScore(golferId, val) {
+  if (val === '' || val == null) {
+    ROOT.child('scores/' + golferId + '/total').remove();
+    return;
+  }
   const n = parseInt(val, 10);
   if (isNaN(n)) return;
-  ROOT.child('scores/' + golferId).update({ mode: 'total', total: n, cut: false });
-}
-function setHoleScore(golferId, round, hole, val) {
-  const n = parseInt(val, 10);
-  if (val === '' || isNaN(n)) {
-    ROOT.child(`scores/${golferId}/rounds/${round}/holes/${hole}`).remove();
-  } else {
-    ROOT.child(`scores/${golferId}/rounds/${round}/holes/${hole}`).set(n);
-  }
-  ROOT.child('scores/' + golferId + '/mode').set('holes');
+  ROOT.child('scores/' + golferId).update({ total: n, cut: false });
 }
 function toggleCut(golferId) {
   const cur = state.scores[golferId]?.cut || false;
@@ -1400,6 +1541,13 @@ function render() {
     state.me = null;
   }
 
+  // Auto-switch tabs on status transitions
+  if (state.status !== state.lastStatus) {
+    if (state.status === 'drafting') state.tab = 'draft';
+    if (state.status === 'complete') state.tab = 'leaderboard';
+    state.lastStatus = state.status;
+  }
+
   // Update user strip
   if (state.me) {
     document.getElementById('userStrip').classList.remove('hidden');
@@ -1410,12 +1558,33 @@ function render() {
 
   if (!state.me) { root.innerHTML = renderLogin(); return; }
 
-  if (state.status === 'waiting') { root.innerHTML = renderLobby(); return; }
-  if (state.status === 'countdown') { root.innerHTML = renderCountdown(); startTimerLoop(); return; }
+  // Capture focus before re-render so score inputs don't lose focus on tick.
+  const active = document.activeElement;
+  const focusId = active && active.id ? active.id : null;
+  const selStart = active && 'selectionStart' in active ? active.selectionStart : null;
+  const selEnd = active && 'selectionEnd' in active ? active.selectionEnd : null;
 
-  // Draft / complete: show tabs
-  root.innerHTML = renderTabs() + renderTabContent();
-  startTimerLoop();
+  if (state.status === 'waiting') {
+    root.innerHTML = renderLobby();
+  } else if (state.status === 'countdown') {
+    root.innerHTML = renderCountdown();
+    startTimerLoop();
+  } else {
+    // Draft / complete: show tabs
+    root.innerHTML = renderTabs() + renderTabContent();
+    startTimerLoop();
+  }
+
+  // Restore focus if the same element exists after re-render
+  if (focusId) {
+    const el = document.getElementById(focusId);
+    if (el && typeof el.focus === 'function') {
+      el.focus();
+      if (selStart != null && 'setSelectionRange' in el) {
+        try { el.setSelectionRange(selStart, selEnd); } catch (e) {}
+      }
+    }
+  }
 }
 
 function renderLogin() {
@@ -1542,21 +1711,97 @@ function renderCommissionerControls(playerList) {
 }
 
 function renderCountdown() {
+  const ds = state.draftState || {};
+  if (ds.countdownPhase === 'wheel' && ds.wheel) {
+    return renderWheelOverlay(ds);
+  }
+  // Default = 'ready' (or anything else): show the ticking pre-draft timer
+  const elapsed = ds.countdownStart ? (Date.now() - ds.countdownStart)/1000 : 0;
+  const remaining = Math.max(0, Math.ceil(READY_COUNTDOWN - elapsed));
   return `
     <div class="countdown-overlay" id="countdownOverlay">
       <div class="label">Draft Begins In</div>
-      <div class="num">${READY_COUNTDOWN}</div>
+      <div class="num" id="countdownNum">${remaining}</div>
       <div class="roulette">Get Ready</div>
     </div>
   `;
+}
+
+function renderWheelOverlay(ds) {
+  const w = ds.wheel;
+  const totalPlayers = (ds.draftOrder || []).length;
+  const pickNum = w.pickNumber || ((ds.spinIndex || 0) + 1);
+  const targetId = w.players[w.targetIdx];
+  const segDeg = 360 / w.players.length;
+  // Land target slice center at top (where the pointer is)
+  const targetCenter = (w.targetIdx + 0.5) * segDeg;
+  const finalRotation = 360 * 6 - targetCenter; // 6 spins then settle
+  const winnerName = playerLabel(targetId);
+  // The wheel SVG itself is wrapped in a key tied to spinIndex so React-style
+  // remount happens (CSS animation re-fires) for each new pick.
+  return `
+    <div class="countdown-overlay wheel-overlay">
+      <div class="wheel-pick-label">Picking #${pickNum} of ${totalPlayers}</div>
+      <div class="wheel-stage">
+        <div class="wheel-pointer"></div>
+        <div class="wheel-rotor"
+             data-spin="${ds.spinIndex || 0}"
+             style="--final-rot:${finalRotation}deg; --spin-duration:${SPIN_DURATION_MS}ms;">
+          ${buildWheelSVG(w.players)}
+        </div>
+        <div class="wheel-hub">
+          <div class="hub-eyebrow">Pick ${pickNum}</div>
+          <div class="hub-name" id="wheelHubName">…</div>
+        </div>
+      </div>
+      <div class="wheel-revealed" id="wheelRevealed"
+           style="--spin-duration:${SPIN_DURATION_MS}ms;">${winnerName}</div>
+    </div>
+  `;
+}
+
+function buildWheelSVG(playerIds) {
+  const n = playerIds.length;
+  const cx = 250, cy = 250, r = 230;
+  const segAngle = (2 * Math.PI) / n;
+  const colors = ['#163826', '#1f4a32'];
+  let html = `<svg viewBox="0 0 500 500" class="wheel-svg" xmlns="http://www.w3.org/2000/svg">`;
+  // Outer ring
+  html += `<circle cx="${cx}" cy="${cy}" r="${r+4}" fill="none" stroke="#fdb913" stroke-width="3"/>`;
+  // Slices
+  for (let i = 0; i < n; i++) {
+    const a1 = i * segAngle - Math.PI/2;
+    const a2 = (i+1) * segAngle - Math.PI/2;
+    const x1 = cx + r * Math.cos(a1);
+    const y1 = cy + r * Math.sin(a1);
+    const x2 = cx + r * Math.cos(a2);
+    const y2 = cy + r * Math.sin(a2);
+    const largeArc = segAngle > Math.PI ? 1 : 0;
+    html += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc} 1 ${x2},${y2} Z" fill="${colors[i % 2]}" stroke="#c98e0a" stroke-width="1.2"/>`;
+  }
+  // Labels (radial, reading inward to outward)
+  const labelR = r * 0.62;
+  const fontSize = Math.max(12, Math.min(22, 26 - Math.floor(n * 0.6)));
+  for (let i = 0; i < n; i++) {
+    const aMid = (i + 0.5) * segAngle - Math.PI/2;
+    const lx = cx + labelR * Math.cos(aMid);
+    const ly = cy + labelR * Math.sin(aMid);
+    const rotDeg = (aMid * 180/Math.PI) + 90;
+    const name = String(playerLabel(playerIds[i])).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+    html += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="#f7f3e8" font-family="Cinzel, Trajan Pro, Georgia, serif" font-size="${fontSize}" font-weight="600" transform="rotate(${rotDeg} ${lx} ${ly})">${name}</text>`;
+  }
+  // Center cap
+  html += `<circle cx="${cx}" cy="${cy}" r="40" fill="#0a1d11" stroke="#fdb913" stroke-width="2"/>`;
+  html += `</svg>`;
+  return html;
 }
 
 function renderTabs() {
   const showAdmin = isAdmin && state.status !== 'waiting';
   return `
     <div class="tabs">
-      <button class="tab ${state.tab === 'draft' ? 'active' : ''}" onclick="state.tab='draft';render()">Draft Room</button>
       <button class="tab ${state.tab === 'leaderboard' ? 'active' : ''}" onclick="state.tab='leaderboard';render()">Leaderboard</button>
+      <button class="tab ${state.tab === 'draft' ? 'active' : ''}" onclick="state.tab='draft';render()">Draft Room</button>
       ${showAdmin ? `<button class="tab ${state.tab === 'admin' ? 'active' : ''}" onclick="state.tab='admin';render()">Admin</button>` : ''}
     </div>
   `;
@@ -1589,7 +1834,6 @@ function renderDraftTab() {
   const taken = pickedGolferIds();
   const filtered = FIELD.filter(g => {
     if (state.hideTaken && taken.has(g.id)) return false;
-    if (state.filterTier !== 'all' && g.tier !== parseInt(state.filterTier, 10)) return false;
     return true;
   });
 
@@ -1616,12 +1860,6 @@ function renderDraftTab() {
         `}
 
         <div class="filter-row">
-          ${['all',1,2,3,4,5,6].map(t => `
-            <button class="filter-chip ${state.filterTier == t ? 'active' : ''}"
-                    onclick="state.filterTier='${t}';render()">
-              ${t === 'all' ? 'All Tiers' : 'Tier ' + t}
-            </button>
-          `).join('')}
           <button class="filter-chip ${state.hideTaken ? 'active' : ''}"
                   onclick="state.hideTaken=!state.hideTaken;render()">
             ${state.hideTaken ? '✓ ' : ''}Hide Drafted
@@ -1637,9 +1875,7 @@ function renderDraftTab() {
             const owner = ownerPick ? playerLabel(ownerPick.playerId) : null;
             return `
               <div class="golfer-row ${isTaken ? 'taken' : ''}">
-                <div class="tier">T${g.tier}</div>
                 <div class="gname">${g.name}</div>
-                <div class="odds">${fmtOdds(g.odds)}</div>
                 <div>
                   ${isTaken
                     ? `<div class="owner-pill">${owner || '—'}</div>`
@@ -1721,34 +1957,42 @@ function renderPoolStandings() {
 function renderAllGolfers() {
   const picked = state.draftState?.picks || {};
   const ownerByGolfer = {};
+  const draftedIds = new Set();
   Object.values(picked).forEach(p => {
     ownerByGolfer[p.golferId] = playerLabel(p.playerId);
+    draftedIds.add(p.golferId);
   });
 
-  const rows = FIELD.map(g => {
-    const sc = getGolferScore(g.id);
-    const cut = state.scores[g.id]?.cut;
-    return { ...g, score: sc, cut, owner: ownerByGolfer[g.id] };
-  }).sort((a, b) => {
-    const sa = a.score === null ? 999 : a.score;
-    const sb = b.score === null ? 999 : b.score;
-    return sa - sb;
-  });
+  const rows = FIELD
+    .filter(g => draftedIds.has(g.id))
+    .map(g => {
+      const sc = getGolferScore(g.id);
+      const cut = state.scores[g.id]?.cut;
+      return { ...g, score: sc, cut, owner: ownerByGolfer[g.id] };
+    })
+    .sort((a, b) => {
+      const sa = a.score === null ? 999 : a.score;
+      const sb = b.score === null ? 999 : b.score;
+      return sa - sb;
+    });
+
+  if (rows.length === 0) {
+    return '<div class="empty-state">No drafted golfers yet.</div>';
+  }
 
   return `
     <div class="leaderboard">
-      <div class="lb-header">
-        <div>POS</div><div>GOLFER</div><div style="text-align:right;">TO PAR</div><div></div>
+      <div class="lb-header simple">
+        <div>POS</div><div>GOLFER</div><div style="text-align:right;">TO PAR</div>
       </div>
       ${rows.map((g, i) => `
-        <div class="lb-row">
+        <div class="lb-row simple">
           <div class="pos">${g.score === null ? '—' : i + 1}</div>
           <div class="nm">
             ${g.name}${g.cut ? '<span class="cut-badge">CUT</span>' : ''}
             ${g.owner ? `<small><span class="owner-tag">${g.owner}</span></small>` : ''}
           </div>
           <div class="score ${g.score !== null && g.score < 0 ? 'under' : ''}">${g.score === null ? '—' : fmtToPar(g.score)}</div>
-          <div class="thru">T${g.tier}</div>
         </div>
       `).join('')}
     </div>
@@ -1813,84 +2057,40 @@ function renderAdminTab() {
       <div class="panel-eyebrow">Score Entry</div>
       <div class="panel-title">Admin Console</div>
       <p style="color:var(--ivory-dim); font-style:italic; font-family:var(--serif); margin-top:6px;">
-        Update scores below. Toggle between hole-by-hole and total entry. All updates push live.
+        Type each drafted golfer's current score to par (negative for under, e.g. <em>-7</em>). Updates push live.
       </p>
-      <div style="margin-top:18px;">
+      <div class="score-list">
         ${draftedList.length === 0 ? '<div class="empty-state">No golfers drafted yet.</div>' : ''}
-        ${draftedList.map(g => renderAdminGolfer(g)).join('')}
+        ${draftedList.map(g => renderAdminScoreRow(g)).join('')}
       </div>
     </div>
   `;
 }
 
-function renderAdminGolfer(g) {
+function renderAdminScoreRow(g) {
   const s = state.scores[g.id] || {};
-  const mode = s.mode || 'total';
   const score = getGolferScore(g.id);
   const ownerPick = Object.values(state.draftState?.picks || {}).find(p => p.golferId === g.id);
   const owner = ownerPick ? playerLabel(ownerPick.playerId) : '';
+  const inputVal = typeof s.total === 'number' && !s.cut ? s.total : '';
 
   return `
-    <div class="admin-golfer" id="ag_${g.id}">
-      <div class="admin-golfer-head" onclick="document.getElementById('ag_${g.id}').classList.toggle('open')">
-        <div class="gn">${g.name}<small>OWNED BY ${owner || '—'} · TIER ${g.tier}${s.cut ? ' · CUT' : ''}</small></div>
-        <div class="sc ${score !== null && score < 0 ? 'under' : ''}">${score === null ? '—' : fmtToPar(score)}</div>
-        <button class="secondary" onclick="event.stopPropagation();toggleCut('${g.id}')">${s.cut ? 'Restore' : 'Mark Cut'}</button>
+    <div class="score-row ${s.cut ? 'is-cut' : ''}">
+      <div class="sr-name">
+        ${g.name}
+        <small>OWNED BY ${owner || '—'}${s.cut ? ' · CUT' : ''}</small>
       </div>
-      <div class="admin-golfer-body">
-        <div class="admin-mode-toggle">
-          <button class="${mode === 'total' ? 'active' : ''}" onclick="setScoreMode('${g.id}','total')">Total</button>
-          <button class="${mode === 'holes' ? 'active' : ''}" onclick="setScoreMode('${g.id}','holes')">Hole-By-Hole</button>
-        </div>
-        ${mode === 'total' ? `
-          <div class="total-input">
-            <label>To Par:</label>
-            <input type="number" value="${typeof s.total === 'number' ? s.total : ''}"
-                   onchange="setTotalScore('${g.id}', this.value)" placeholder="0" />
-            <span style="font-size:11px;color:var(--ivory-faint);">Use negative for under par (e.g. -7)</span>
-          </div>
-        ` : renderHoleEntry(g.id, s)}
+      <div class="sr-input">
+        <input type="number" id="sc_${g.id}" value="${inputVal}" placeholder="—"
+               ${s.cut ? 'disabled' : ''}
+               onchange="setTotalScore('${g.id}', this.value)" />
       </div>
+      <div class="sr-display ${score !== null && score < 0 ? 'under' : ''}">
+        ${score === null ? '—' : fmtToPar(score)}
+      </div>
+      <button class="secondary sr-cut" onclick="toggleCut('${g.id}')">${s.cut ? 'Restore' : 'Mark Cut'}</button>
     </div>
   `;
-}
-
-function renderHoleEntry(golferId, s) {
-  let html = '';
-  for (let r = 1; r <= 4; r++) {
-    const round = s.rounds?.[r] || {};
-    const holes = round.holes || {};
-    let frontTotal = 0, backTotal = 0, frontHasData = false, backHasData = false;
-    for (let h = 1; h <= 9; h++) if (holes[h]) { frontTotal += holes[h] - AUGUSTA_PARS[h-1]; frontHasData = true; }
-    for (let h = 10; h <= 18; h++) if (holes[h]) { backTotal += holes[h] - AUGUSTA_PARS[h-1]; backHasData = true; }
-    html += `
-      <div class="round-block">
-        <div class="rlabel">Round ${r} · Front 9 ${frontHasData ? '(' + fmtToPar(frontTotal) + ')' : ''}</div>
-        <div class="holes-row">
-          ${[1,2,3,4,5,6,7,8,9].map(h => `
-            <div class="hole-cell">
-              <div class="hnum">${h}</div>
-              <div class="hpar">par ${AUGUSTA_PARS[h-1]}</div>
-              <input type="number" min="1" max="15" value="${holes[h] || ''}"
-                     onchange="setHoleScore('${golferId}', ${r}, ${h}, this.value)" />
-            </div>
-          `).join('')}
-        </div>
-        <div class="rlabel" style="margin-top:8px;">Round ${r} · Back 9 ${backHasData ? '(' + fmtToPar(backTotal) + ')' : ''}</div>
-        <div class="holes-row">
-          ${[10,11,12,13,14,15,16,17,18].map(h => `
-            <div class="hole-cell">
-              <div class="hnum">${h}</div>
-              <div class="hpar">par ${AUGUSTA_PARS[h-1]}</div>
-              <input type="number" min="1" max="15" value="${holes[h] || ''}"
-                     onchange="setHoleScore('${golferId}', ${r}, ${h}, this.value)" />
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }
-  return html;
 }
 
 /* ════════════════════════════════════════════════════════════════════
