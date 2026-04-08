@@ -301,6 +301,33 @@
     font-weight: 600;
     align-self: center;
   }
+  .reset-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 24px;
+    padding: 16px 18px;
+    background: rgba(230, 57, 70, 0.08);
+    border: 1px solid rgba(230, 57, 70, 0.45);
+    border-left: 3px solid var(--red-under);
+    border-radius: 2px;
+  }
+  .reset-row .reset-title {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red-under);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .reset-row .reset-sub {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--ivory-dim);
+    font-style: italic;
+  }
   .ready-warning strong {
     font-family: var(--sans);
     font-size: 11px;
@@ -1041,6 +1068,7 @@ function joinPool(name) {
 ═══════════════════════════════════════════════════════════════════════ */
 ROOT.child('players').on('value', snap => {
   state.players = snap.val() || {};
+  state.playersLoaded = true;
   render();
 });
 ROOT.child('status').on('value', snap => {
@@ -1104,6 +1132,20 @@ function adminBeginDraft() {
   msg += '\n\nNo one else can join after this.';
   if (!confirm(msg)) return;
   startDraftCountdown();
+}
+
+function resetPool() {
+  if (!isAdmin) return;
+  if (!confirm('RESET THE ENTIRE POOL?\n\nThis wipes every player, every pick, every score, and the draft state from Firebase. Use this for test runs or to start over before the real draft.\n\nAre you sure?')) return;
+  if (!confirm('Last chance — really wipe everything?')) return;
+  ROOT.remove().then(() => {
+    // Also clear my own local session so I see the login screen
+    localStorage.removeItem('masters2026_me');
+    state.me = null;
+    document.getElementById('userStrip')?.classList.add('hidden');
+    state.tab = 'draft';
+    render();
+  });
 }
 
 function startDraftCountdown() {
@@ -1261,10 +1303,19 @@ function toggleCut(golferId) {
 function render() {
   const root = document.getElementById('screen');
 
+  // If the pool was reset (or we were removed), drop our local session
+  // and show the login screen so we can rejoin cleanly.
+  if (state.me && state.playersLoaded && !state.players[state.me.id]) {
+    localStorage.removeItem('masters2026_me');
+    state.me = null;
+  }
+
   // Update user strip
   if (state.me) {
     document.getElementById('userStrip').classList.remove('hidden');
     document.getElementById('userStripName').textContent = state.me.name;
+  } else {
+    document.getElementById('userStrip')?.classList.add('hidden');
   }
 
   if (!state.me) { root.innerHTML = renderLogin(); return; }
@@ -1368,6 +1419,14 @@ function renderCommissionerControls(playerList) {
           </span>
         </div>
       ` : ''}
+
+      <div class="reset-row">
+        <div>
+          <div class="reset-title">Reset Pool</div>
+          <div class="reset-sub">Wipes all players, picks, and scores. Use for test runs or to start over before the real draft.</div>
+        </div>
+        <button class="danger" onclick="resetPool()">Reset Everything</button>
+      </div>
 
       <div class="admin-player-grid">
         ${playerList.map(([id, p]) => `
