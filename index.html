@@ -958,6 +958,22 @@ function toggleReady() {
   ROOT.child('players/' + state.me.id + '/ready').set(!cur);
 }
 
+function setCommissioner(playerId) {
+  if (!isAdmin) return;
+  ROOT.child('commissioner').set(playerId);
+}
+
+function removePlayer(playerId) {
+  if (!isAdmin) return;
+  if (!confirm('Remove this player from the pool?')) return;
+  ROOT.child('players/' + playerId).remove();
+  // If we removed the commissioner, hand it to whoever is left
+  if (state.commissioner === playerId) {
+    const others = Object.keys(state.players).filter(id => id !== playerId);
+    ROOT.child('commissioner').set(others[0] || null);
+  }
+}
+
 function startDraftCountdown() {
   // Build initial draft order (will be randomized after countdown)
   const playerIds = Object.keys(state.players);
@@ -1136,7 +1152,6 @@ function renderLogin() {
       <div class="panel-title">Sign In</div>
       <input type="text" id="nameInput" placeholder="Your name" maxlength="20" />
       <button onclick="(()=>{const n=document.getElementById('nameInput').value.trim();if(n)joinPool(n);})()">Join The Pool</button>
-      <p class="note">Just enter your name. The first to arrive becomes commissioner.</p>
     </div>
   `;
 }
@@ -1177,6 +1192,35 @@ function renderLobby() {
         <div class="ml-auto" style="font-size:11px; color:var(--ivory-faint); letter-spacing:0.1em;">
           ${TEAM_SIZE} GOLFERS · ${PICK_TIMER}s PER PICK · SNAKE ORDER
         </div>
+      </div>
+    </div>
+    ${isAdmin ? renderCommissionerControls(playerList) : ''}
+  `;
+}
+
+function renderCommissionerControls(playerList) {
+  return `
+    <div class="panel">
+      <div class="panel-eyebrow">Admin Controls</div>
+      <div class="panel-title">Commissioner</div>
+      <p style="color:var(--ivory-dim); font-style:italic; font-family:var(--serif); margin-top:6px;">
+        The commissioner is the only player who can begin the draft. Reassign or remove players below.
+      </p>
+      <div class="lobby-grid" style="margin-top:18px;">
+        ${playerList.map(([id, p]) => `
+          <div class="lobby-player ${id === state.commissioner ? 'ready' : ''}">
+            ${id === state.commissioner ? '<div class="badge">COMM</div>' : ''}
+            <div class="name">${p.name}</div>
+            <div class="status">${id === state.commissioner ? 'Current Commissioner' : 'Player'}</div>
+            <div class="row-flex" style="justify-content:center; margin-top:10px; gap:6px;">
+              ${id === state.commissioner
+                ? ''
+                : `<button class="secondary" style="padding:6px 10px; font-size:9px;" onclick="setCommissioner('${id}')">Make Commish</button>`}
+              <button class="danger" style="padding:6px 10px; font-size:9px;" onclick="removePlayer('${id}')">Remove</button>
+            </div>
+          </div>
+        `).join('')}
+        ${playerList.length === 0 ? '<div class="empty-state">No players have joined yet.</div>' : ''}
       </div>
     </div>
   `;
@@ -1435,8 +1479,10 @@ function renderAdminTab() {
   const drafted = new Set();
   Object.values(state.draftState?.picks || {}).forEach(p => drafted.add(p.golferId));
   const draftedList = FIELD.filter(g => drafted.has(g.id));
+  const playerList = Object.entries(state.players).sort((a, b) => (a[1].joinedAt || 0) - (b[1].joinedAt || 0));
 
   return `
+    ${renderCommissionerControls(playerList)}
     <div class="panel">
       <div class="panel-eyebrow">Score Entry</div>
       <div class="panel-title">Admin Console</div>
