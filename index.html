@@ -902,28 +902,57 @@ function totalPicks() {
 /* ════════════════════════════════════════════════════════════════════
    AUTH / IDENTITY
 ═══════════════════════════════════════════════════════════════════════ */
+const STORAGE_VERSION = 'v2';
+
+function nameToId(name) {
+  const slug = (name || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 30);
+  return slug ? 'p_' + slug : null;
+}
+
 function loadMe() {
+  // One-time clear of any pre-name-based-id sessions
+  if (localStorage.getItem('masters2026_v') !== STORAGE_VERSION) {
+    localStorage.removeItem('masters2026_me');
+    localStorage.setItem('masters2026_v', STORAGE_VERSION);
+    return;
+  }
   const saved = localStorage.getItem('masters2026_me');
   if (saved) {
     try { state.me = JSON.parse(saved); } catch(e){}
   }
 }
-function saveMe() { localStorage.setItem('masters2026_me', JSON.stringify(state.me)); }
+function saveMe() {
+  localStorage.setItem('masters2026_me', JSON.stringify(state.me));
+  localStorage.setItem('masters2026_v', STORAGE_VERSION);
+}
+
+function signOut() {
+  localStorage.removeItem('masters2026_me');
+  state.me = null;
+  document.getElementById('userStrip')?.classList.add('hidden');
+  render();
+}
 
 function joinPool(name) {
-  const id = uid();
+  const id = nameToId(name);
+  if (!id) { alert('Please enter a valid name (letters or numbers).'); return; }
   state.me = { id, name };
   saveMe();
-  ROOT.child('players/' + id).set({
-    name,
-    joinedAt: Date.now(),
-    ready: false,
-    order: Object.keys(state.players).length
+  // If this name already has a slot, just adopt it. Otherwise create one.
+  ROOT.child('players/' + id).once('value', snap => {
+    if (!snap.exists()) {
+      ROOT.child('players/' + id).set({
+        name,
+        joinedAt: Date.now(),
+        ready: false,
+        order: Object.keys(state.players).length
+      });
+      // First player becomes commissioner
+      ROOT.child('commissioner').transaction(cur => cur || id);
+    }
+    render();
   });
-  // First player becomes commissioner
-  ROOT.child('commissioner').transaction(cur => cur || id);
   ROOT.child('status').transaction(cur => cur || 'waiting');
-  render();
 }
 
 /* ════════════════════════════════════════════════════════════════════
