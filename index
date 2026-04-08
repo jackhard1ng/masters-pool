@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Masters 2026 — Draft Pool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ───────────────────── Augusta palette ───────────────────── */
+  :root {
+    --pine-darkest: #0a1d11;
+    --pine-dark:    #0f2818;
+    --pine:         #163826;
+    --pine-light:   #1f4a32;
+    --ivory:        #f7f3e8;
+    --ivory-dim:    #d9d3c2;
+    --ivory-faint:  #8a8674;
+    --gold:         #fdb913;
+    --gold-dark:    #c98e0a;
+    --azalea:       #d94f70;
+    --red-under:    #e63946;
+    --white-line:   rgba(247,243,232,0.12);
+    --serif-display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+    --serif: 'EB Garamond', Georgia, serif;
+    --sans:  'Inter', -apple-system, system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--pine-darkest);
+    color: var(--ivory);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse at top, rgba(31,74,50,0.45) 0%, transparent 60%),
+      linear-gradient(180deg, var(--pine-darkest) 0%, #060f08 100%);
+    background-attachment: fixed;
+  }
+
+  /* ───────────────────── Layout ───────────────────── */
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px 80px;
+  }
+
+  /* ───────────────────── Header ───────────────────── */
+  header.masthead {
+    text-align: center;
+    padding: 48px 0 40px;
+    border-bottom: 1px solid var(--white-line);
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .crest {
+    width: 200px;
+    height: 180px;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .crest svg { width: 100%; height: 100%; }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 14px auto 12px;
+    max-width: 280px;
+  }
+  .ornament .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+  }
+  .ornament .dot {
+    color: var(--gold);
+    font-size: 12px;
+    line-height: 1;
+  }
+  h1.title {
+    font-family: var(--serif-display);
+    font-size: 44px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--ivory);
+    line-height: 1;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+  }
+  .subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ivory-dim);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+  .user-strip {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ivory-faint);
+  }
+  .user-strip strong { color: var(--gold); font-weight: 600; }
+
+  /* ───────────────────── Buttons ───────────────────── */
+  button, .btn {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 12px 22px;
+    background: var(--gold);
+    color: var(--pine-darkest);
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+  }
+  button:hover:not(:disabled) { background: #ffc733; transform: translateY(-1px); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.secondary {
+    background: transparent;
+    color: var(--ivory);
+    border: 1px solid var(--white-line);
+  }
+  button.secondary:hover:not(:disabled) {
+    background: var(--pine);
+    border-color: var(--gold);
+  }
+  button.danger { background: var(--red-under); color: var(--ivory); }
+
+  /* ───────────────────── Inputs ───────────────────── */
+  input[type=text], input[type=number], select {
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--white-line);
+    color: var(--ivory);
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus { border-color: var(--gold); }
+
+  /* ───────────────────── Cards / panels ───────────────────── */
+  .panel {
+    background: rgba(15,40,24,0.6);
+    border: 1px solid var(--white-line);
+    border-radius: 3px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .panel-title {
+    font-family: var(--serif-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ivory);
+    margin-bottom: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .panel-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+
+  /* ───────────────────── Login ───────────────────── */
+  .login-wrap {
+    max-width: 460px;
+    margin: 60px auto;
+    text-align: center;
+  }
+  .login-wrap input { width: 100%; margin: 18px 0; text-align: center; font-size: 18px; padding: 14px; }
+  .login-wrap p.note { color: var(--ivory-faint); font-size: 12px; margin-top: 14px; font-style: italic; font-family: var(--serif); }
+
+  /* ───────────────────── Lobby ───────────────────── */
+  .lobby-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 22px 0;
+  }
+  .lobby-player {
+    padding: 16px;
+    background: var(--pine-dark);
+    border: 1px solid var(--white-line);
+    border-radius: 2px;
+    text-align: center;
+    position: relative;
+  }
+  .lobby-player.ready { border-color: var(--gold); background: rgba(253,185,19,0.08); }
+  .lobby-player .name { font-family: var(--serif); font-size: 18px; font-weight: 500; }
+  .lobby-player .status { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ivory-faint); margin-top: 4px; }
+  .lobby-player.ready .status { color: var(--gold); }
+  .lobby-player .badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    background: var(--gold);
+    color: var(--pine-darkest);
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-weight: 700;
+  }
+
+  .countdown-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(6,15,8,0.96);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .countdown-overlay .label {
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .countdown-overlay .num {
+    font-family: var(--serif-display);
+    font-size: 200px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1;
+  }
+  .countdown-overlay .roulette {
+    font-family: var(--serif-display);
+    font-size: 32px;
+    color: var(--gold);
+    margin-top: 24px;
+    min-height: 50px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ───────────────────── Tabs ───────────────────── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--white-line);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    background: transparent;
+    color: var(--ivory-dim);
+    padding: 14px 20px;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    letter-spacing: 0.16em;
+    font-size: 11px;
+  }
+  .tab:hover { background: transparent; color: var(--ivory); transform: none; }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ───────────────────── Draft view ───────────────────── */
+  .draft-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+  }
+  @media (max-width: 900px) { .draft-grid { grid-template-columns: 1fr; } }
+
+  .on-clock {
+    text-align: center;
+    padding: 20px;
+    background: rgba(253,185,19,0.08);
+    border: 1px solid var(--gold);
+    margin-bottom: 18px;
+    border-radius: 2px;
+  }
+  .on-clock .lbl { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); }
+  .on-clock .who { font-family: var(--serif-display); font-size: 24px; margin: 6px 0; letter-spacing: 0.08em; text-transform: uppercase; }
+  .on-clock .timer { font-family: var(--serif-display); font-size: 56px; font-weight: 600; color: var(--ivory); line-height: 1; }
+  .on-clock .timer.warn { color: var(--red-under); }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .filter-chip {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    padding: 7px 14px;
+    background: transparent;
+    color: var(--ivory-dim);
+    border: 1px solid var(--white-line);
+    border-radius: 99px;
+  }
+  .filter-chip.active { background: var(--gold); color: var(--pine-darkest); border-color: var(--gold); }
+  .filter-chip:hover:not(.active) { background: var(--pine); transform: none; }
+
+  .golfer-list {
+    max-height: 540px;
+    overflow-y: auto;
+    border: 1px solid var(--white-line);
+    border-radius: 2px;
+  }
+  .golfer-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 60px 90px;
+    align-items: center;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--white-line);
+    gap: 10px;
+  }
+  .golfer-row:last-child { border-bottom: none; }
+  .golfer-row.taken { opacity: 0.32; }
+  .golfer-row .tier {
+    font-family: var(--serif);
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+  .golfer-row .gname { font-family: var(--serif); font-size: 17px; }
+  .golfer-row .odds { font-size: 11px; color: var(--ivory-faint); text-align: right; font-variant-numeric: tabular-nums; }
+  .golfer-row button { padding: 6px 12px; font-size: 10px; letter-spacing: 0.12em; }
+  .golfer-row .owner-pill {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    background: var(--pine-light);
+    color: var(--ivory);
+    padding: 3px 7px;
+    border-radius: 2px;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .draft-board { font-size: 13px; }
+  .draft-board h3 {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 10px;
+  }
+  .draft-pick {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--white-line);
+    gap: 8px;
+    align-items: center;
+  }
+  .draft-pick .num { color: var(--ivory-faint); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .draft-pick .info { font-family: var(--serif); font-size: 14px; }
+  .draft-pick .info small { display: block; font-family: var(--sans); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ivory-faint); }
+  .draft-pick.current { background: rgba(253,185,19,0.08); padding-left: 8px; padding-right: 8px; }
+  .draft-pick.current .num { color: var(--gold); font-weight: 700; }
+
+  /* ───────────────────── Leaderboard ───────────────────── */
+  .lb-toggle {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+    background: rgba(0,0,0,0.3);
+    padding: 4px;
+    border-radius: 2px;
+    width: fit-content;
+  }
+  .lb-toggle button {
+    padding: 9px 18px;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    background: transparent;
+    color: var(--ivory-dim);
+  }
+  .lb-toggle button.active { background: var(--gold); color: var(--pine-darkest); }
+  .lb-toggle button:hover:not(.active) { background: var(--pine); transform: none; }
+
+  .leaderboard {
+    background: var(--pine);
+    border: 1px solid var(--gold-dark);
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+  }
+  .lb-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 100px 80px;
+    padding: 12px 18px;
+    background: var(--pine-dark);
+    border-bottom: 1px solid var(--gold-dark);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .lb-header.simple { grid-template-columns: 60px 1fr 100px; }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 100px 80px;
+    padding: 13px 18px;
+    border-bottom: 1px solid rgba(253,185,19,0.12);
+    align-items: center;
+    font-family: var(--serif);
+  }
+  .lb-row.simple { grid-template-columns: 60px 1fr 100px; }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-row .pos {
+    font-family: var(--serif-display);
+    font-size: 22px;
+    color: var(--gold);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .lb-row .nm {
+    font-size: 22px;
+    color: var(--ivory);
+    font-weight: 500;
+    font-family: var(--serif);
+  }
+  .lb-row .nm small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ivory-faint);
+    margin-top: 2px;
+  }
+  .lb-row .score {
+    font-family: var(--serif-display);
+    font-size: 24px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--ivory);
+  }
+  .lb-row .score.under { color: var(--red-under); }
+  .lb-row .thru {
+    font-size: 12px;
+    text-align: right;
+    color: var(--ivory-faint);
+    font-family: var(--sans);
+  }
+  .lb-row .owner-tag {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    background: var(--gold);
+    color: var(--pine-darkest);
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .lb-row .cut-badge {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    background: var(--red-under);
+    color: var(--ivory);
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+
+  /* By-team view */
+  .team-section { margin-bottom: 32px; }
+  .team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 18px;
+    background: var(--pine-dark);
+    border: 1px solid var(--gold-dark);
+    border-bottom: none;
+  }
+  .team-header .teamname { font-family: var(--serif-display); font-size: 22px; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+  .team-header .teamtotal { font-family: var(--serif-display); font-size: 28px; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .team-header .teamtotal.under { color: var(--red-under); }
+  .team-roster {
+    background: var(--pine);
+    border: 1px solid var(--gold-dark);
+  }
+  .team-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 90px;
+    padding: 11px 18px;
+    border-bottom: 1px solid rgba(253,185,19,0.1);
+    font-family: var(--serif);
+    align-items: center;
+  }
+  .team-row .pos { color: var(--gold); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .team-row .nm { font-size: 17px; color: var(--ivory); }
+  .team-row .sc { text-align: right; font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .team-row .sc.under { color: var(--red-under); }
+  .team-row.dropped { opacity: 0.4; }
+  .team-row.dropped .nm { text-decoration: line-through; }
+  .cut-line {
+    text-align: center;
+    padding: 8px;
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(253,185,19,0.06);
+    border-bottom: 1px solid rgba(253,185,19,0.1);
+    border-top: 1px dashed rgba(253,185,19,0.3);
+    font-weight: 600;
+  }
+
+  /* ───────────────────── Admin ───────────────────── */
+  .admin-golfer {
+    border: 1px solid var(--white-line);
+    margin-bottom: 12px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .admin-golfer-head {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--pine-dark);
+    align-items: center;
+  }
+  .admin-golfer-head .gn { font-family: var(--serif); font-size: 18px; }
+  .admin-golfer-head .gn small { display: block; font-family: var(--sans); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ivory-faint); margin-top: 2px; }
+  .admin-golfer-head .sc { font-family: var(--serif); font-size: 22px; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .admin-golfer-head .sc.under { color: var(--red-under); }
+  .admin-golfer-body { padding: 14px 16px; background: rgba(0,0,0,0.2); display: none; }
+  .admin-golfer.open .admin-golfer-body { display: block; }
+  .admin-mode-toggle {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    background: rgba(0,0,0,0.3);
+    padding: 3px;
+    width: fit-content;
+    border-radius: 2px;
+  }
+  .admin-mode-toggle button {
+    padding: 7px 14px;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    background: transparent;
+    color: var(--ivory-dim);
+  }
+  .admin-mode-toggle button.active { background: var(--gold); color: var(--pine-darkest); }
+  .admin-mode-toggle button:hover:not(.active) { background: var(--pine); transform: none; }
+
+  .round-block { margin-bottom: 12px; }
+  .round-block .rlabel {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .holes-row {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .hole-cell {
+    text-align: center;
+  }
+  .hole-cell .hnum { font-size: 8px; color: var(--ivory-faint); letter-spacing: 0.05em; }
+  .hole-cell .hpar { font-size: 8px; color: var(--gold); }
+  .hole-cell input {
+    width: 100%;
+    padding: 4px 2px;
+    text-align: center;
+    font-size: 13px;
+    font-family: var(--serif);
+    font-weight: 600;
+  }
+  .total-input { display: flex; align-items: center; gap: 10px; }
+  .total-input label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ivory-dim); }
+  .total-input input { width: 90px; text-align: center; font-size: 18px; font-weight: 600; font-family: var(--serif); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--ivory-faint);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  /* small helpers */
+  .row-flex { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .ml-auto { margin-left: auto; }
+  .mt-12 { margin-top: 12px; }
+  .mt-20 { margin-top: 20px; }
+  .hidden { display: none !important; }
+
+  /* mobile */
+  @media (max-width: 640px) {
+    h1.title { font-size: 32px; }
+    .user-strip { position: static; margin-bottom: 8px; }
+    header.masthead { padding-top: 16px; }
+    .lb-row .nm { font-size: 16px; }
+    .lb-row .score { font-size: 18px; }
+    .panel { padding: 18px; }
+    .golfer-row { grid-template-columns: 30px 1fr 80px; }
+    .golfer-row .odds { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="masthead">
+    <div class="user-strip hidden" id="userStrip">Signed in as <strong id="userStripName"></strong></div>
+    <div class="crest">
+      <img src="masters-icon.png" alt="" onerror="this.style.display='none'" style="width:100%; height:100%; object-fit:contain;" />
+    </div>
+    <div class="eyebrow">A Tradition Unlike Any Other</div>
+    <h1 class="title">The Masters</h1>
+    <div class="subtitle">Draft Pool · MMXXVI</div>
+  </header>
+
+  <div id="screen"></div>
+</div>
+
+<!-- Firebase compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   FIREBASE
+═══════════════════════════════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCyQmBjc1MA9vutjMbnhmlqR2tNbJMNk5U",
+  authDomain: "masters-pool-ff3c8.firebaseapp.com",
+  databaseURL: "https://masters-pool-ff3c8-default-rtdb.firebaseio.com",
+  projectId: "masters-pool-ff3c8",
+  storageBucket: "masters-pool-ff3c8.firebasestorage.app",
+  messagingSenderId: "694699462231",
+  appId: "1:694699462231:web:f74f47748d161119411d12",
+  measurementId: "G-6SXFWHZ8LP"
+};
+firebase.initializeApp(firebaseConfig);
+const db  = firebase.database();
+const ROOT = db.ref('masters/2026');
+
+/* ════════════════════════════════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════════════════════════════════ */
+const TEAM_SIZE = 6;
+const PICK_TIMER = 30;
+const READY_COUNTDOWN = 15;
+const RANDOMIZER_DURATION = 10;
+const ADMIN_KEY = 'masters2026';
+const AUGUSTA_PARS = [4,5,4,3,4,3,4,5,4,4,4,3,5,4,5,3,4,4]; // par 72
+const PAR_TOTAL = 72;
+const MISSED_CUT_SCORE = 20;
+
+const FIELD = [
+  // Tier 1
+  {id:'scheffler',   name:'Scottie Scheffler',  tier:1, odds:500},
+  {id:'rahm',        name:'Jon Rahm',           tier:1, odds:1000},
+  {id:'dechambeau',  name:'Bryson DeChambeau',  tier:1, odds:1000},
+  {id:'mcilroy',     name:'Rory McIlroy',       tier:1, odds:1300},
+  {id:'schauffele',  name:'Xander Schauffele',  tier:1, odds:1500},
+  {id:'aberg',       name:'Ludvig Åberg',       tier:1, odds:1800},
+  {id:'fitzpatrick', name:'Matt Fitzpatrick',   tier:1, odds:2000},
+  {id:'cyoung',      name:'Cameron Young',      tier:1, odds:2000},
+  // Tier 2
+  {id:'fleetwood',   name:'Tommy Fleetwood',    tier:2, odds:2500},
+  {id:'morikawa',    name:'Collin Morikawa',    tier:2, odds:2500},
+  {id:'matsuyama',   name:'Hideki Matsuyama',   tier:2, odds:2800},
+  {id:'niemann',     name:'Joaquin Niemann',    tier:2, odds:2800},
+  {id:'cantlay',     name:'Patrick Cantlay',    tier:2, odds:3000},
+  {id:'hovland',     name:'Viktor Hovland',     tier:2, odds:3000},
+  {id:'hatton',      name:'Tyrrell Hatton',     tier:2, odds:3500},
+  {id:'jthomas',     name:'Justin Thomas',      tier:2, odds:3500},
+  {id:'wclark',      name:'Wyndham Clark',      tier:2, odds:4000},
+  {id:'sburns',      name:'Sam Burns',          tier:2, odds:4000},
+  // Tier 3
+  {id:'henley',      name:'Russell Henley',     tier:3, odds:5000},
+  {id:'macintyre',   name:'Robert MacIntyre',   tier:3, odds:5000},
+  {id:'theegala',    name:'Sahith Theegala',    tier:3, odds:5500},
+  {id:'sungjae',     name:'Sungjae Im',         tier:3, odds:5500},
+  {id:'minwoo',      name:'Min Woo Lee',        tier:3, odds:6000},
+  {id:'bhatia',      name:'Akshay Bhatia',      tier:3, odds:6000},
+  {id:'koepka',      name:'Brooks Koepka',      tier:3, odds:6500},
+  {id:'finau',       name:'Tony Finau',         tier:3, odds:6500},
+  {id:'conners',     name:'Corey Conners',      tier:3, odds:7000},
+  {id:'straka',      name:'Sepp Straka',        tier:3, odds:7000},
+  {id:'reed',        name:'Patrick Reed',       tier:3, odds:8000},
+  {id:'csmith',      name:'Cameron Smith',      tier:3, odds:8000},
+  // Tier 4
+  {id:'ascott',      name:'Adam Scott',         tier:4, odds:9000},
+  {id:'homa',        name:'Max Homa',           tier:4, odds:9000},
+  {id:'spieth',      name:'Jordan Spieth',      tier:4, odds:9000},
+  {id:'kbradley',    name:'Keegan Bradley',     tier:4, odds:10000},
+  {id:'rfox',        name:'Ryan Fox',           tier:4, odds:10000},
+  {id:'jday',        name:'Jason Day',          tier:4, odds:10000},
+  {id:'mcnealy',     name:'Maverick McNealy',   tier:4, odds:11000},
+  {id:'arai',        name:'Aaron Rai',          tier:4, odds:11000},
+  {id:'jtposton',    name:'J.T. Poston',        tier:4, odds:12000},
+  {id:'bezuid',      name:'Christiaan Bezuidenhout', tier:4, odds:12000},
+  {id:'siwoo',       name:'Si Woo Kim',         tier:4, odds:12000},
+  {id:'bharman',     name:'Brian Harman',       tier:4, odds:12500},
+  // Tier 5
+  {id:'dberger',     name:'Daniel Berger',      tier:5, odds:15000},
+  {id:'tomkim',      name:'Tom Kim',            tier:5, odds:15000},
+  {id:'ntaylor',     name:'Nick Taylor',        tier:5, odds:15000},
+  {id:'sergio',      name:'Sergio Garcia',      tier:5, odds:17500},
+  {id:'jrose',       name:'Justin Rose',        tier:5, odds:17500},
+  {id:'dj',          name:'Dustin Johnson',     tier:5, odds:20000},
+  {id:'cdavis',      name:'Cameron Davis',      tier:5, odds:20000},
+  {id:'bgriffin',    name:'Ben Griffin',        tier:5, odds:20000},
+  {id:'dthompson',   name:'Davis Thompson',     tier:5, odds:22500},
+  {id:'henglish',    name:'Harris English',     tier:5, odds:22500},
+  {id:'jaeger',      name:'Stephan Jaeger',     tier:5, odds:25000},
+  // Tier 6 (champions & amateurs)
+  {id:'couples',     name:'Fred Couples',       tier:6, odds:50000},
+  {id:'olazabal',    name:'José María Olazábal',tier:6, odds:50000},
+  {id:'langer',      name:'Bernhard Langer',    tier:6, odds:50000},
+  {id:'mweir',       name:'Mike Weir',          tier:6, odds:50000},
+  {id:'lmize',       name:'Larry Mize',         tier:6, odds:50000},
+  {id:'slyle',       name:'Sandy Lyle',         tier:6, odds:50000},
+  {id:'vsingh',      name:'Vijay Singh',        tier:6, odds:50000},
+  {id:'cabrera',     name:'Ángel Cabrera',      tier:6, odds:50000},
+  {id:'bubba',       name:'Bubba Watson',       tier:6, odds:50000},
+  {id:'zjohnson',    name:'Zach Johnson',       tier:6, odds:50000},
+];
+
+/* ════════════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════════════ */
+let state = {
+  me: null,                 // {id, name}
+  status: 'waiting',        // waiting | drafting | complete
+  players: {},              // {id: {name, joinedAt, ready, order}}
+  draftState: null,         // {order, currentPick, picks, timerEnd, paused}
+  scores: {},               // {golferId: {mode, total, cut, rounds}}
+  commissioner: null,
+  tab: 'draft',             // draft | leaderboard | admin
+  lbView: 'pool',           // pool | golfers | teams
+  filterTier: 'all',        // all | 1..6
+  hideTaken: true,
+  countdownActive: false,
+};
+const isAdmin = new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
+
+/* ════════════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════════════ */
+function fmtToPar(n) {
+  if (n === 0 || n === null || n === undefined || isNaN(n)) return n === 0 ? 'E' : '—';
+  if (n > 0) return '+' + n;
+  return String(n);
+}
+function golferById(id) { return FIELD.find(g => g.id === id); }
+function fmtOdds(n) { return '+' + n.toLocaleString(); }
+function uid() { return 'p_' + Math.random().toString(36).slice(2, 10); }
+
+function getGolferScore(golferId) {
+  const s = state.scores[golferId];
+  if (!s) return null;
+  if (s.cut) return MISSED_CUT_SCORE;
+  if (s.mode === 'holes' && s.rounds) {
+    let total = 0, anyHoles = false;
+    for (let r = 1; r <= 4; r++) {
+      const round = s.rounds[r];
+      if (!round || !round.holes) continue;
+      for (let h = 1; h <= 18; h++) {
+        const stroke = round.holes[h];
+        if (typeof stroke === 'number' && stroke > 0) {
+          total += stroke - AUGUSTA_PARS[h-1];
+          anyHoles = true;
+        }
+      }
+    }
+    return anyHoles ? total : null;
+  }
+  if (typeof s.total === 'number') return s.total;
+  return null;
+}
+
+function getPlayerGolfers(playerId) {
+  if (!state.draftState || !state.draftState.picks) return [];
+  return Object.values(state.draftState.picks)
+    .filter(p => p.playerId === playerId)
+    .map(p => p.golferId);
+}
+
+function getPlayerTotal(playerId) {
+  const golfers = getPlayerGolfers(playerId);
+  const scores = golfers.map(g => {
+    const sc = getGolferScore(g);
+    return sc === null ? 0 : sc;
+  });
+  scores.sort((a, b) => a - b);
+  return scores.slice(0, 4).reduce((a, b) => a + b, 0);
+}
+
+function pickedGolferIds() {
+  if (!state.draftState || !state.draftState.picks) return new Set();
+  return new Set(Object.values(state.draftState.picks).map(p => p.golferId));
+}
+
+function getDraftOrderForPick(pickNumber, baseOrder) {
+  // 0-indexed pickNumber. Snake: round 0 = forward, round 1 = reverse, ...
+  const n = baseOrder.length;
+  const round = Math.floor(pickNumber / n);
+  const idxInRound = pickNumber % n;
+  const idx = (round % 2 === 0) ? idxInRound : (n - 1 - idxInRound);
+  return baseOrder[idx];
+}
+
+function totalPicks() {
+  const n = Object.keys(state.players).length;
+  return n * TEAM_SIZE;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   AUTH / IDENTITY
+═══════════════════════════════════════════════════════════════════════ */
+function loadMe() {
+  const saved = localStorage.getItem('masters2026_me');
+  if (saved) {
+    try { state.me = JSON.parse(saved); } catch(e){}
+  }
+}
+function saveMe() { localStorage.setItem('masters2026_me', JSON.stringify(state.me)); }
+
+function joinPool(name) {
+  const id = uid();
+  state.me = { id, name };
+  saveMe();
+  ROOT.child('players/' + id).set({
+    name,
+    joinedAt: Date.now(),
+    ready: false,
+    order: Object.keys(state.players).length
+  });
+  // First player becomes commissioner
+  ROOT.child('commissioner').transaction(cur => cur || id);
+  ROOT.child('status').transaction(cur => cur || 'waiting');
+  render();
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   FIREBASE LISTENERS
+═══════════════════════════════════════════════════════════════════════ */
+ROOT.child('players').on('value', snap => {
+  state.players = snap.val() || {};
+  render();
+});
+ROOT.child('status').on('value', snap => {
+  state.status = snap.val() || 'waiting';
+  render();
+});
+ROOT.child('commissioner').on('value', snap => {
+  state.commissioner = snap.val();
+  render();
+});
+ROOT.child('draftState').on('value', snap => {
+  state.draftState = snap.val();
+  render();
+});
+ROOT.child('scores').on('value', snap => {
+  state.scores = snap.val() || {};
+  render();
+});
+
+/* ════════════════════════════════════════════════════════════════════
+   LOBBY ACTIONS
+═══════════════════════════════════════════════════════════════════════ */
+function toggleReady() {
+  const cur = state.players[state.me.id]?.ready;
+  ROOT.child('players/' + state.me.id + '/ready').set(!cur);
+}
+
+function startDraftCountdown() {
+  // Build initial draft order (will be randomized after countdown)
+  const playerIds = Object.keys(state.players);
+  if (playerIds.length < 2) { alert('Need at least 2 players'); return; }
+  ROOT.child('status').set('countdown');
+  ROOT.child('draftState').set({
+    countdownStart: Date.now(),
+    countdownPhase: 'ready',  // ready -> randomizing -> done
+    order: playerIds,
+    currentPick: 0,
+    picks: {},
+  });
+  // After 15s, start randomizer
+  setTimeout(() => {
+    ROOT.child('draftState/countdownPhase').set('randomizing');
+    setTimeout(() => {
+      // Randomize order
+      const ids = Object.keys(state.players);
+      for (let i = ids.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ids[i], ids[j]] = [ids[j], ids[i]];
+      }
+      ROOT.child('draftState/order').set(ids);
+      ROOT.child('draftState/countdownPhase').set('done');
+      ROOT.child('status').set('drafting');
+      ROOT.child('draftState/timerEnd').set(Date.now() + PICK_TIMER * 1000);
+    }, RANDOMIZER_DURATION * 1000);
+  }, READY_COUNTDOWN * 1000);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   DRAFT ACTIONS
+═══════════════════════════════════════════════════════════════════════ */
+function makePick(golferId, isAuto = false) {
+  if (!state.draftState) return;
+  const ds = state.draftState;
+  const picksObj = ds.picks || {};
+  const pickNum = ds.currentPick || 0;
+  const onClock = getDraftOrderForPick(pickNum, ds.order);
+  if (!isAuto && onClock !== state.me.id) return;
+  if (pickedGolferIds().has(golferId)) return;
+
+  const updates = {};
+  updates['picks/' + pickNum] = {
+    golferId, playerId: onClock, auto: isAuto, timestamp: Date.now()
+  };
+  updates['currentPick'] = pickNum + 1;
+
+  const total = totalPicks();
+  if (pickNum + 1 >= total) {
+    updates['timerEnd'] = null;
+    ROOT.child('draftState').update(updates);
+    ROOT.child('status').set('complete');
+  } else {
+    updates['timerEnd'] = Date.now() + PICK_TIMER * 1000;
+    ROOT.child('draftState').update(updates);
+  }
+}
+
+function autoPick() {
+  // Random golfer from best available tier
+  const taken = pickedGolferIds();
+  const available = FIELD.filter(g => !taken.has(g.id));
+  if (available.length === 0) return;
+  const minTier = Math.min(...available.map(g => g.tier));
+  const tierGolfers = available.filter(g => g.tier === minTier);
+  const choice = tierGolfers[Math.floor(Math.random() * tierGolfers.length)];
+  makePick(choice.id, true);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   TIMER LOOP
+═══════════════════════════════════════════════════════════════════════ */
+let timerInterval = null;
+let lastTimerCheck = 0;
+function startTimerLoop() {
+  if (timerInterval) return;
+  timerInterval = setInterval(() => {
+    if (state.status !== 'drafting' || !state.draftState) return;
+    const ds = state.draftState;
+    if (!ds.timerEnd) return;
+    const remaining = Math.max(0, Math.ceil((ds.timerEnd - Date.now()) / 1000));
+    const el = document.getElementById('pickTimer');
+    if (el) {
+      el.textContent = remaining;
+      el.classList.toggle('warn', remaining <= 5);
+    }
+    // Auto-pick on timeout — only commissioner triggers it to avoid duplicates
+    if (remaining === 0 && state.me?.id === state.commissioner && Date.now() - lastTimerCheck > 2000) {
+      lastTimerCheck = Date.now();
+      autoPick();
+    }
+    // Countdown overlay updates
+    if (state.status === 'countdown' && ds.countdownStart) {
+      updateCountdownOverlay();
+    }
+  }, 250);
+}
+
+function updateCountdownOverlay() {
+  const ds = state.draftState;
+  if (!ds || !ds.countdownStart) return;
+  const elapsed = (Date.now() - ds.countdownStart) / 1000;
+  const overlay = document.getElementById('countdownOverlay');
+  if (!overlay) return;
+  const numEl = overlay.querySelector('.num');
+  const labelEl = overlay.querySelector('.label');
+  const rouletteEl = overlay.querySelector('.roulette');
+
+  if (ds.countdownPhase === 'ready') {
+    const remaining = Math.max(0, Math.ceil(READY_COUNTDOWN - elapsed));
+    labelEl.textContent = 'Draft Begins In';
+    numEl.textContent = remaining;
+    rouletteEl.textContent = 'Get Ready';
+  } else if (ds.countdownPhase === 'randomizing') {
+    labelEl.textContent = 'Randomizing Draft Order';
+    numEl.textContent = '';
+    // Cycle through names
+    const names = Object.values(state.players).map(p => p.name);
+    const idx = Math.floor(Date.now() / 100) % names.length;
+    rouletteEl.textContent = names[idx] || '';
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   SCORE ENTRY (admin)
+═══════════════════════════════════════════════════════════════════════ */
+function setScoreMode(golferId, mode) {
+  ROOT.child('scores/' + golferId + '/mode').set(mode);
+}
+function setTotalScore(golferId, val) {
+  const n = parseInt(val, 10);
+  if (isNaN(n)) return;
+  ROOT.child('scores/' + golferId).update({ mode: 'total', total: n, cut: false });
+}
+function setHoleScore(golferId, round, hole, val) {
+  const n = parseInt(val, 10);
+  if (val === '' || isNaN(n)) {
+    ROOT.child(`scores/${golferId}/rounds/${round}/holes/${hole}`).remove();
+  } else {
+    ROOT.child(`scores/${golferId}/rounds/${round}/holes/${hole}`).set(n);
+  }
+  ROOT.child('scores/' + golferId + '/mode').set('holes');
+}
+function toggleCut(golferId) {
+  const cur = state.scores[golferId]?.cut || false;
+  ROOT.child('scores/' + golferId + '/cut').set(!cur);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════════════════════════ */
+function render() {
+  const root = document.getElementById('screen');
+
+  // Update user strip
+  if (state.me) {
+    document.getElementById('userStrip').classList.remove('hidden');
+    document.getElementById('userStripName').textContent = state.me.name;
+  }
+
+  if (!state.me) { root.innerHTML = renderLogin(); return; }
+
+  if (state.status === 'waiting') { root.innerHTML = renderLobby(); return; }
+  if (state.status === 'countdown') { root.innerHTML = renderCountdown(); startTimerLoop(); return; }
+
+  // Draft / complete: show tabs
+  root.innerHTML = renderTabs() + renderTabContent();
+  startTimerLoop();
+}
+
+function renderLogin() {
+  return `
+    <div class="login-wrap panel">
+      <div class="panel-eyebrow">Enter The Clubhouse</div>
+      <div class="panel-title">Sign In</div>
+      <input type="text" id="nameInput" placeholder="Your name" maxlength="20" />
+      <button onclick="(()=>{const n=document.getElementById('nameInput').value.trim();if(n)joinPool(n);})()">Join The Pool</button>
+      <p class="note">Just enter your name. The first to arrive becomes commissioner.</p>
+    </div>
+  `;
+}
+
+function renderLobby() {
+  const playerList = Object.entries(state.players).sort((a, b) => (a[1].joinedAt || 0) - (b[1].joinedAt || 0));
+  const allReady = playerList.length >= 2 && playerList.every(([id, p]) => p.ready);
+  const myReady = state.players[state.me.id]?.ready;
+  const isCommish = state.me.id === state.commissioner;
+
+  return `
+    <div class="panel">
+      <div class="panel-eyebrow">Pre-Draft Lobby</div>
+      <div class="panel-title">Players In The Field</div>
+      <p style="color:var(--ivory-dim); font-style:italic; font-family:var(--serif); margin-top:6px;">
+        ${playerList.length} player${playerList.length !== 1 ? 's' : ''} joined · waiting for everyone to be ready
+      </p>
+
+      <div class="lobby-grid">
+        ${playerList.map(([id, p]) => `
+          <div class="lobby-player ${p.ready ? 'ready' : ''}">
+            ${id === state.commissioner ? '<div class="badge">COMM</div>' : ''}
+            <div class="name">${p.name}</div>
+            <div class="status">${p.ready ? '✓ Ready' : 'Not Ready'}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="row-flex mt-20">
+        <button onclick="toggleReady()" class="${myReady ? 'secondary' : ''}">
+          ${myReady ? 'Cancel Ready' : "I'm Ready"}
+        </button>
+        ${isCommish ? `
+          <button onclick="startDraftCountdown()" ${!allReady ? 'disabled' : ''}>
+            ${allReady ? 'Begin Draft' : 'Waiting For All Ready'}
+          </button>
+        ` : ''}
+        <div class="ml-auto" style="font-size:11px; color:var(--ivory-faint); letter-spacing:0.1em;">
+          ${TEAM_SIZE} GOLFERS · ${PICK_TIMER}s PER PICK · SNAKE ORDER
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderCountdown() {
+  return `
+    <div class="countdown-overlay" id="countdownOverlay">
+      <div class="label">Draft Begins In</div>
+      <div class="num">${READY_COUNTDOWN}</div>
+      <div class="roulette">Get Ready</div>
+    </div>
+  `;
+}
+
+function renderTabs() {
+  const showAdmin = isAdmin && state.status !== 'waiting';
+  return `
+    <div class="tabs">
+      <button class="tab ${state.tab === 'draft' ? 'active' : ''}" onclick="state.tab='draft';render()">Draft Room</button>
+      <button class="tab ${state.tab === 'leaderboard' ? 'active' : ''}" onclick="state.tab='leaderboard';render()">Leaderboard</button>
+      ${showAdmin ? `<button class="tab ${state.tab === 'admin' ? 'active' : ''}" onclick="state.tab='admin';render()">Admin</button>` : ''}
+    </div>
+  `;
+}
+
+function renderTabContent() {
+  if (state.tab === 'draft') return renderDraftTab();
+  if (state.tab === 'leaderboard') return renderLeaderboardTab();
+  if (state.tab === 'admin') return renderAdminTab();
+  return '';
+}
+
+/* ──────── DRAFT TAB ──────── */
+function renderDraftTab() {
+  if (!state.draftState) return '<div class="empty-state">Waiting for draft to begin…</div>';
+  const ds = state.draftState;
+  const draftComplete = state.status === 'complete';
+  const onClockId = draftComplete ? null : getDraftOrderForPick(ds.currentPick || 0, ds.order);
+  const onClockPlayer = onClockId ? state.players[onClockId] : null;
+  const myTurn = onClockId === state.me.id;
+
+  const taken = pickedGolferIds();
+  const filtered = FIELD.filter(g => {
+    if (state.hideTaken && taken.has(g.id)) return false;
+    if (state.filterTier !== 'all' && g.tier !== parseInt(state.filterTier, 10)) return false;
+    return true;
+  });
+
+  return `
+    <div class="draft-grid">
+      <div>
+        ${draftComplete ? `
+          <div class="on-clock">
+            <div class="lbl">Draft Complete</div>
+            <div class="who">All Picks Made</div>
+          </div>
+        ` : `
+          <div class="on-clock">
+            <div class="lbl">On The Clock</div>
+            <div class="who">${onClockPlayer?.name || '—'} ${myTurn ? '(YOU)' : ''}</div>
+            <div class="timer" id="pickTimer">${PICK_TIMER}</div>
+            <div style="font-size:10px; letter-spacing:0.18em; color:var(--ivory-faint); margin-top:6px;">
+              PICK ${(ds.currentPick || 0) + 1} OF ${totalPicks()}
+            </div>
+          </div>
+        `}
+
+        <div class="filter-row">
+          ${['all',1,2,3,4,5,6].map(t => `
+            <button class="filter-chip ${state.filterTier == t ? 'active' : ''}"
+                    onclick="state.filterTier='${t}';render()">
+              ${t === 'all' ? 'All Tiers' : 'Tier ' + t}
+            </button>
+          `).join('')}
+          <button class="filter-chip ${state.hideTaken ? 'active' : ''}"
+                  onclick="state.hideTaken=!state.hideTaken;render()">
+            ${state.hideTaken ? '✓ ' : ''}Hide Drafted
+          </button>
+        </div>
+
+        <div class="golfer-list">
+          ${filtered.map(g => {
+            const isTaken = taken.has(g.id);
+            const ownerPick = isTaken
+              ? Object.values(ds.picks || {}).find(p => p.golferId === g.id)
+              : null;
+            const owner = ownerPick ? state.players[ownerPick.playerId]?.name : null;
+            return `
+              <div class="golfer-row ${isTaken ? 'taken' : ''}">
+                <div class="tier">T${g.tier}</div>
+                <div class="gname">${g.name}</div>
+                <div class="odds">${fmtOdds(g.odds)}</div>
+                <div>
+                  ${isTaken
+                    ? `<div class="owner-pill">${owner || '—'}</div>`
+                    : (myTurn && !draftComplete
+                        ? `<button onclick="makePick('${g.id}')">Draft</button>`
+                        : '')}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="draft-board">
+        <h3>Picks</h3>
+        ${(() => {
+          const picks = ds.picks || {};
+          const totalP = totalPicks();
+          let html = '';
+          for (let i = 0; i < Math.min(totalP, 60); i++) {
+            const pick = picks[i];
+            const isCurrent = !draftComplete && i === (ds.currentPick || 0);
+            const playerForSlot = pick ? state.players[pick.playerId]?.name : (state.players[getDraftOrderForPick(i, ds.order)]?.name || '—');
+            html += `
+              <div class="draft-pick ${isCurrent ? 'current' : ''}">
+                <div class="num">${i + 1}.</div>
+                <div class="info">
+                  ${pick ? golferById(pick.golferId)?.name || '?' : '—'}
+                  <small>${playerForSlot}${pick?.auto ? ' · AUTO' : ''}</small>
+                </div>
+              </div>
+            `;
+          }
+          return html;
+        })()}
+      </div>
+    </div>
+  `;
+}
+
+/* ──────── LEADERBOARD TAB ──────── */
+function renderLeaderboardTab() {
+  if (!state.draftState || state.draftState.currentPick === 0) {
+    return '<div class="empty-state">Leaderboard appears once the draft begins.</div>';
+  }
+  return `
+    <div class="lb-toggle">
+      <button class="${state.lbView === 'pool' ? 'active' : ''}" onclick="state.lbView='pool';render()">Pool Standings</button>
+      <button class="${state.lbView === 'golfers' ? 'active' : ''}" onclick="state.lbView='golfers';render()">All Golfers</button>
+      <button class="${state.lbView === 'teams' ? 'active' : ''}" onclick="state.lbView='teams';render()">By Team</button>
+    </div>
+    ${state.lbView === 'pool' ? renderPoolStandings() : ''}
+    ${state.lbView === 'golfers' ? renderAllGolfers() : ''}
+    ${state.lbView === 'teams' ? renderByTeam() : ''}
+  `;
+}
+
+function renderPoolStandings() {
+  const players = Object.entries(state.players).map(([id, p]) => ({
+    id, name: p.name, total: getPlayerTotal(id)
+  })).sort((a, b) => a.total - b.total);
+
+  return `
+    <div class="leaderboard">
+      <div class="lb-header simple">
+        <div>POS</div><div>PLAYER</div><div style="text-align:right;">TO PAR</div>
+      </div>
+      ${players.map((p, i) => `
+        <div class="lb-row simple">
+          <div class="pos">${i + 1}</div>
+          <div class="nm">${p.name}</div>
+          <div class="score ${p.total < 0 ? 'under' : ''}">${fmtToPar(p.total)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderAllGolfers() {
+  const picked = state.draftState?.picks || {};
+  const ownerByGolfer = {};
+  Object.values(picked).forEach(p => {
+    ownerByGolfer[p.golferId] = state.players[p.playerId]?.name;
+  });
+
+  const rows = FIELD.map(g => {
+    const sc = getGolferScore(g.id);
+    const cut = state.scores[g.id]?.cut;
+    return { ...g, score: sc, cut, owner: ownerByGolfer[g.id] };
+  }).sort((a, b) => {
+    const sa = a.score === null ? 999 : a.score;
+    const sb = b.score === null ? 999 : b.score;
+    return sa - sb;
+  });
+
+  return `
+    <div class="leaderboard">
+      <div class="lb-header">
+        <div>POS</div><div>GOLFER</div><div style="text-align:right;">TO PAR</div><div></div>
+      </div>
+      ${rows.map((g, i) => `
+        <div class="lb-row">
+          <div class="pos">${g.score === null ? '—' : i + 1}</div>
+          <div class="nm">
+            ${g.name}${g.cut ? '<span class="cut-badge">CUT</span>' : ''}
+            ${g.owner ? `<small><span class="owner-tag">${g.owner}</span></small>` : ''}
+          </div>
+          <div class="score ${g.score !== null && g.score < 0 ? 'under' : ''}">${g.score === null ? '—' : fmtToPar(g.score)}</div>
+          <div class="thru">T${g.tier}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderByTeam() {
+  const players = Object.entries(state.players).map(([id, p]) => ({
+    id, name: p.name, total: getPlayerTotal(id)
+  })).sort((a, b) => a.total - b.total);
+
+  return players.map(p => {
+    const golfers = getPlayerGolfers(p.id).map(gid => {
+      const g = golferById(gid);
+      const sc = getGolferScore(gid);
+      const cut = state.scores[gid]?.cut;
+      return { id: gid, name: g?.name || '?', tier: g?.tier, score: sc === null ? 0 : sc, rawScore: sc, cut };
+    }).sort((a, b) => a.score - b.score);
+
+    return `
+      <div class="team-section">
+        <div class="team-header">
+          <div class="teamname">${p.name}</div>
+          <div class="teamtotal ${p.total < 0 ? 'under' : ''}">${fmtToPar(p.total)}</div>
+        </div>
+        <div class="team-roster">
+          ${golfers.map((g, i) => {
+            if (i === 4) {
+              return `<div class="cut-line">── BEST 4 CUT LINE ──</div>` + renderTeamRow(g, i);
+            }
+            return renderTeamRow(g, i);
+          }).join('')}
+          ${golfers.length === 0 ? '<div class="empty-state">No golfers drafted yet.</div>' : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTeamRow(g, i) {
+  const dropped = i >= 4;
+  return `
+    <div class="team-row ${dropped ? 'dropped' : ''}">
+      <div class="pos">${i + 1}</div>
+      <div class="nm">${g.name}${g.cut ? '<span class="cut-badge">CUT</span>' : ''}${dropped ? ' <small style="font-size:9px;letter-spacing:0.1em;color:var(--ivory-faint);">DROPPED</small>' : ''}</div>
+      <div class="sc ${g.rawScore !== null && g.rawScore < 0 ? 'under' : ''}">${g.rawScore === null ? '—' : fmtToPar(g.rawScore)}</div>
+    </div>
+  `;
+}
+
+/* ──────── ADMIN TAB ──────── */
+function renderAdminTab() {
+  if (!isAdmin) return '<div class="empty-state">Admin access required.</div>';
+  const drafted = new Set();
+  Object.values(state.draftState?.picks || {}).forEach(p => drafted.add(p.golferId));
+  const draftedList = FIELD.filter(g => drafted.has(g.id));
+
+  return `
+    <div class="panel">
+      <div class="panel-eyebrow">Score Entry</div>
+      <div class="panel-title">Admin Console</div>
+      <p style="color:var(--ivory-dim); font-style:italic; font-family:var(--serif); margin-top:6px;">
+        Update scores below. Toggle between hole-by-hole and total entry. All updates push live.
+      </p>
+      <div style="margin-top:18px;">
+        ${draftedList.length === 0 ? '<div class="empty-state">No golfers drafted yet.</div>' : ''}
+        ${draftedList.map(g => renderAdminGolfer(g)).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderAdminGolfer(g) {
+  const s = state.scores[g.id] || {};
+  const mode = s.mode || 'total';
+  const score = getGolferScore(g.id);
+  const ownerPick = Object.values(state.draftState?.picks || {}).find(p => p.golferId === g.id);
+  const owner = ownerPick ? state.players[ownerPick.playerId]?.name : '';
+
+  return `
+    <div class="admin-golfer" id="ag_${g.id}">
+      <div class="admin-golfer-head" onclick="document.getElementById('ag_${g.id}').classList.toggle('open')">
+        <div class="gn">${g.name}<small>OWNED BY ${owner || '—'} · TIER ${g.tier}${s.cut ? ' · CUT' : ''}</small></div>
+        <div class="sc ${score !== null && score < 0 ? 'under' : ''}">${score === null ? '—' : fmtToPar(score)}</div>
+        <button class="secondary" onclick="event.stopPropagation();toggleCut('${g.id}')">${s.cut ? 'Restore' : 'Mark Cut'}</button>
+      </div>
+      <div class="admin-golfer-body">
+        <div class="admin-mode-toggle">
+          <button class="${mode === 'total' ? 'active' : ''}" onclick="setScoreMode('${g.id}','total')">Total</button>
+          <button class="${mode === 'holes' ? 'active' : ''}" onclick="setScoreMode('${g.id}','holes')">Hole-By-Hole</button>
+        </div>
+        ${mode === 'total' ? `
+          <div class="total-input">
+            <label>To Par:</label>
+            <input type="number" value="${typeof s.total === 'number' ? s.total : ''}"
+                   onchange="setTotalScore('${g.id}', this.value)" placeholder="0" />
+            <span style="font-size:11px;color:var(--ivory-faint);">Use negative for under par (e.g. -7)</span>
+          </div>
+        ` : renderHoleEntry(g.id, s)}
+      </div>
+    </div>
+  `;
+}
+
+function renderHoleEntry(golferId, s) {
+  let html = '';
+  for (let r = 1; r <= 4; r++) {
+    const round = s.rounds?.[r] || {};
+    const holes = round.holes || {};
+    let frontTotal = 0, backTotal = 0, frontHasData = false, backHasData = false;
+    for (let h = 1; h <= 9; h++) if (holes[h]) { frontTotal += holes[h] - AUGUSTA_PARS[h-1]; frontHasData = true; }
+    for (let h = 10; h <= 18; h++) if (holes[h]) { backTotal += holes[h] - AUGUSTA_PARS[h-1]; backHasData = true; }
+    html += `
+      <div class="round-block">
+        <div class="rlabel">Round ${r} · Front 9 ${frontHasData ? '(' + fmtToPar(frontTotal) + ')' : ''}</div>
+        <div class="holes-row">
+          ${[1,2,3,4,5,6,7,8,9].map(h => `
+            <div class="hole-cell">
+              <div class="hnum">${h}</div>
+              <div class="hpar">par ${AUGUSTA_PARS[h-1]}</div>
+              <input type="number" min="1" max="15" value="${holes[h] || ''}"
+                     onchange="setHoleScore('${golferId}', ${r}, ${h}, this.value)" />
+            </div>
+          `).join('')}
+        </div>
+        <div class="rlabel" style="margin-top:8px;">Round ${r} · Back 9 ${backHasData ? '(' + fmtToPar(backTotal) + ')' : ''}</div>
+        <div class="holes-row">
+          ${[10,11,12,13,14,15,16,17,18].map(h => `
+            <div class="hole-cell">
+              <div class="hnum">${h}</div>
+              <div class="hpar">par ${AUGUSTA_PARS[h-1]}</div>
+              <input type="number" min="1" max="15" value="${holes[h] || ''}"
+                     onchange="setHoleScore('${golferId}', ${r}, ${h}, this.value)" />
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+  return html;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════════════════ */
+loadMe();
+render();
+</script>
+</body>
+</html>
