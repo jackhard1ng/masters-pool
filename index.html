@@ -413,11 +413,80 @@
     border: 1px solid var(--gold);
     margin-bottom: 18px;
     border-radius: 2px;
+    position: relative;
+    transition: background 0.3s ease;
   }
   .on-clock .lbl { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); }
   .on-clock .who { font-family: var(--serif-display); font-size: 24px; margin: 6px 0; letter-spacing: 0.08em; text-transform: uppercase; }
   .on-clock .timer { font-family: var(--serif-display); font-size: 56px; font-weight: 600; color: var(--ivory); line-height: 1; }
   .on-clock .timer.warn { color: var(--red-under); }
+
+  /* My turn — pulsing gold glow + sweeping highlight */
+  .on-clock.my-turn {
+    background: rgba(253,185,19,0.16);
+    border-width: 2px;
+    animation: myTurnPulse 1.6s ease-in-out infinite;
+    overflow: hidden;
+  }
+  .on-clock.my-turn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(253,185,19,0.18) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: myTurnSweep 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .on-clock.my-turn .lbl {
+    animation: myTurnLabelFlash 1.6s ease-in-out infinite;
+  }
+  .on-clock.my-turn .who {
+    color: var(--gold);
+    text-shadow: 0 0 18px rgba(253,185,19,0.55);
+    animation: myTurnNamePop 1.6s ease-in-out infinite;
+  }
+  .on-clock.my-turn .you-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 4px 10px;
+    background: var(--gold);
+    color: var(--pine-darkest);
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    font-weight: 700;
+    border-radius: 2px;
+    vertical-align: middle;
+    animation: youTagBounce 1.6s ease-in-out infinite;
+  }
+  @keyframes myTurnPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(253,185,19,0.55), 0 0 30px rgba(253,185,19,0.20) inset; border-color: var(--gold); }
+    50%      { box-shadow: 0 0 0 12px rgba(253,185,19,0.00), 0 0 50px rgba(253,185,19,0.35) inset; border-color: #ffd560; }
+  }
+  @keyframes myTurnSweep {
+    0%   { transform: translateX(-100%); }
+    60%  { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+  @keyframes myTurnLabelFlash {
+    0%, 100% { opacity: 0.7; letter-spacing: 0.28em; }
+    50%      { opacity: 1;   letter-spacing: 0.34em; }
+  }
+  @keyframes myTurnNamePop {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.04); }
+  }
+  @keyframes youTagBounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-2px) scale(1.06); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .on-clock.my-turn,
+    .on-clock.my-turn::before,
+    .on-clock.my-turn .lbl,
+    .on-clock.my-turn .who,
+    .on-clock.my-turn .you-tag { animation: none; }
+  }
 
   .filter-row {
     display: flex;
@@ -1218,6 +1287,27 @@ function autoPick() {
   makePick(choice.id, true);
 }
 
+/* ──────── My-turn notification: flash the browser tab title ──────── */
+const ORIGINAL_TITLE = document.title;
+let titleFlashInterval = null;
+let lastOnClockId = null;
+function updateTabTitleForTurn(myTurn) {
+  if (myTurn) {
+    if (titleFlashInterval) return;
+    let on = true;
+    titleFlashInterval = setInterval(() => {
+      document.title = on ? '🟡 YOUR PICK — The Masters' : ORIGINAL_TITLE;
+      on = !on;
+    }, 900);
+  } else {
+    if (titleFlashInterval) {
+      clearInterval(titleFlashInterval);
+      titleFlashInterval = null;
+    }
+    document.title = ORIGINAL_TITLE;
+  }
+}
+
 /* ════════════════════════════════════════════════════════════════════
    TIMER LOOP
 ═══════════════════════════════════════════════════════════════════════ */
@@ -1488,6 +1578,14 @@ function renderDraftTab() {
   const onClockPlayer = onClockId ? state.players[onClockId] : null;
   const myTurn = onClockId === state.me.id;
 
+  // Flash the tab title when it becomes my turn (only on transitions so we
+  // don't restart the interval on every render).
+  const turnKey = draftComplete ? null : (myTurn ? onClockId : null);
+  if (turnKey !== lastOnClockId) {
+    updateTabTitleForTurn(!!turnKey);
+    lastOnClockId = turnKey;
+  }
+
   const taken = pickedGolferIds();
   const filtered = FIELD.filter(g => {
     if (state.hideTaken && taken.has(g.id)) return false;
@@ -1504,9 +1602,12 @@ function renderDraftTab() {
             <div class="who">All Picks Made</div>
           </div>
         ` : `
-          <div class="on-clock">
-            <div class="lbl">On The Clock</div>
-            <div class="who">${playerLabel(onClockId)} ${myTurn ? '(YOU)' : ''}</div>
+          <div class="on-clock${myTurn ? ' my-turn' : ''}">
+            <div class="lbl">${myTurn ? 'You Are On The Clock' : 'On The Clock'}</div>
+            <div class="who">
+              ${playerLabel(onClockId)}
+              ${myTurn ? '<span class="you-tag">YOUR PICK</span>' : ''}
+            </div>
             <div class="timer" id="pickTimer">${PICK_TIMER}</div>
             <div style="font-size:10px; letter-spacing:0.18em; color:var(--ivory-faint); margin-top:6px;">
               PICK ${(ds.currentPick || 0) + 1} OF ${totalPicks()}
