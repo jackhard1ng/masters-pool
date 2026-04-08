@@ -233,6 +233,32 @@
     border-radius: 2px;
     font-weight: 700;
   }
+  .ready-warning {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: rgba(253, 185, 19, 0.08);
+    border: 1px solid var(--gold-dark);
+    border-left: 3px solid var(--gold);
+    border-radius: 2px;
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ivory);
+    line-height: 1.55;
+  }
+  .ready-warning strong {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  .ready-warning em {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--gold);
+  }
 
   .countdown-overlay {
     position: fixed;
@@ -1169,6 +1195,11 @@ function renderLobby() {
             <div class="status">${p.ready ? '✓ Ready' : 'Not Ready'}</div>
           </div>
         `).join('')}
+      </div>
+
+      <div class="ready-warning">
+        <strong>Heads up:</strong> only click <em>I'm Ready</em> when you're actually ready for the draft to start.
+        Once everyone is ready, the commissioner can begin the draft and it cannot be paused.
       </div>
 
       <div class="row-flex mt-20">
