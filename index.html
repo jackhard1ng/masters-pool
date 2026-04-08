@@ -245,6 +245,62 @@
     color: var(--ivory);
     line-height: 1.55;
   }
+  .admin-player-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .admin-player {
+    position: relative;
+    padding: 14px;
+    background: var(--pine-dark);
+    border: 1px solid var(--white-line);
+    border-radius: 2px;
+  }
+  .admin-player.is-commish { border-color: var(--gold); background: rgba(253,185,19,0.08); }
+  .admin-player .badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    background: var(--gold);
+    color: var(--pine-darkest);
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-weight: 700;
+  }
+  .admin-player .login-name {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ivory-faint);
+    margin-bottom: 8px;
+  }
+  .admin-player .dn-label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .admin-player .dn-input {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px 10px;
+    font-family: var(--serif);
+  }
+  .admin-player .status {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    align-self: center;
+  }
   .ready-warning strong {
     font-family: var(--sans);
     font-size: 11px;
@@ -726,76 +782,106 @@ const AUGUSTA_PARS = [4,5,4,3,4,3,4,5,4,4,4,3,5,4,5,3,4,4]; // par 72
 const PAR_TOTAL = 72;
 const MISSED_CUT_SCORE = 20;
 
+// Official 2026 Masters field (91 players, including 6 amateurs marked "(a)").
+// Tiers and odds are estimates based on form/Masters chances; admin can ignore.
 const FIELD = [
   // Tier 1
-  {id:'scheffler',   name:'Scottie Scheffler',  tier:1, odds:500},
-  {id:'rahm',        name:'Jon Rahm',           tier:1, odds:1000},
-  {id:'dechambeau',  name:'Bryson DeChambeau',  tier:1, odds:1000},
-  {id:'mcilroy',     name:'Rory McIlroy',       tier:1, odds:1300},
-  {id:'schauffele',  name:'Xander Schauffele',  tier:1, odds:1500},
-  {id:'aberg',       name:'Ludvig Åberg',       tier:1, odds:1800},
-  {id:'fitzpatrick', name:'Matt Fitzpatrick',   tier:1, odds:2000},
-  {id:'cyoung',      name:'Cameron Young',      tier:1, odds:2000},
+  {id:'aberg',        name:'Ludvig Åberg',              tier:1, odds:1800},
+  {id:'dechambeau',   name:'Bryson DeChambeau',         tier:1, odds:1000},
+  {id:'mcilroy',      name:'Rory McIlroy',              tier:1, odds:800},
+  {id:'morikawa',     name:'Collin Morikawa',           tier:1, odds:2200},
+  {id:'rahm',         name:'Jon Rahm',                  tier:1, odds:1200},
+  {id:'schauffele',   name:'Xander Schauffele',         tier:1, odds:1500},
+  {id:'scheffler',    name:'Scottie Scheffler',         tier:1, odds:500},
   // Tier 2
-  {id:'fleetwood',   name:'Tommy Fleetwood',    tier:2, odds:2500},
-  {id:'morikawa',    name:'Collin Morikawa',    tier:2, odds:2500},
-  {id:'matsuyama',   name:'Hideki Matsuyama',   tier:2, odds:2800},
-  {id:'niemann',     name:'Joaquin Niemann',    tier:2, odds:2800},
-  {id:'cantlay',     name:'Patrick Cantlay',    tier:2, odds:3000},
-  {id:'hovland',     name:'Viktor Hovland',     tier:2, odds:3000},
-  {id:'hatton',      name:'Tyrrell Hatton',     tier:2, odds:3500},
-  {id:'jthomas',     name:'Justin Thomas',      tier:2, odds:3500},
-  {id:'wclark',      name:'Wyndham Clark',      tier:2, odds:4000},
-  {id:'sburns',      name:'Sam Burns',          tier:2, odds:4000},
+  {id:'cantlay',      name:'Patrick Cantlay',           tier:2, odds:3000},
+  {id:'cyoung',       name:'Cameron Young',             tier:2, odds:3500},
+  {id:'fitzpatrick',  name:'Matt Fitzpatrick',          tier:2, odds:2500},
+  {id:'fleetwood',    name:'Tommy Fleetwood',           tier:2, odds:2500},
+  {id:'hatton',       name:'Tyrrell Hatton',            tier:2, odds:2800},
+  {id:'henley',       name:'Russell Henley',            tier:2, odds:4000},
+  {id:'hovland',      name:'Viktor Hovland',            tier:2, odds:3000},
+  {id:'jthomas',      name:'Justin Thomas',             tier:2, odds:3500},
+  {id:'lowry',        name:'Shane Lowry',               tier:2, odds:3500},
+  {id:'matsuyama',    name:'Hideki Matsuyama',          tier:2, odds:2800},
+  {id:'sburns',       name:'Sam Burns',                 tier:2, odds:4000},
+  {id:'spieth',       name:'Jordan Spieth',             tier:2, odds:5000},
   // Tier 3
-  {id:'henley',      name:'Russell Henley',     tier:3, odds:5000},
-  {id:'macintyre',   name:'Robert MacIntyre',   tier:3, odds:5000},
-  {id:'theegala',    name:'Sahith Theegala',    tier:3, odds:5500},
-  {id:'sungjae',     name:'Sungjae Im',         tier:3, odds:5500},
-  {id:'minwoo',      name:'Min Woo Lee',        tier:3, odds:6000},
-  {id:'bhatia',      name:'Akshay Bhatia',      tier:3, odds:6000},
-  {id:'koepka',      name:'Brooks Koepka',      tier:3, odds:6500},
-  {id:'finau',       name:'Tony Finau',         tier:3, odds:6500},
-  {id:'conners',     name:'Corey Conners',      tier:3, odds:7000},
-  {id:'straka',      name:'Sepp Straka',        tier:3, odds:7000},
-  {id:'reed',        name:'Patrick Reed',       tier:3, odds:8000},
-  {id:'csmith',      name:'Cameron Smith',      tier:3, odds:8000},
+  {id:'bhatia',       name:'Akshay Bhatia',             tier:3, odds:6000},
+  {id:'conners',      name:'Corey Conners',             tier:3, odds:5500},
+  {id:'csmith',       name:'Cameron Smith',             tier:3, odds:8000},
+  {id:'jday',         name:'Jason Day',                 tier:3, odds:6500},
+  {id:'jrose',        name:'Justin Rose',               tier:3, odds:8000},
+  {id:'kbradley',     name:'Keegan Bradley',            tier:3, odds:6500},
+  {id:'koepka',       name:'Brooks Koepka',             tier:3, odds:7000},
+  {id:'macintyre',    name:'Robert MacIntyre',          tier:3, odds:5000},
+  {id:'minwoo',       name:'Min Woo Lee',               tier:3, odds:6000},
+  {id:'nhojgaard',    name:'Nicolai Højgaard',          tier:3, odds:7000},
+  {id:'spaun',        name:'J.J. Spaun',                tier:3, odds:7000},
+  {id:'straka',       name:'Sepp Straka',               tier:3, odds:6500},
+  {id:'sungjae',      name:'Sungjae Im',                tier:3, odds:5500},
+  {id:'wclark',       name:'Wyndham Clark',             tier:3, odds:5500},
   // Tier 4
-  {id:'ascott',      name:'Adam Scott',         tier:4, odds:9000},
-  {id:'homa',        name:'Max Homa',           tier:4, odds:9000},
-  {id:'spieth',      name:'Jordan Spieth',      tier:4, odds:9000},
-  {id:'kbradley',    name:'Keegan Bradley',     tier:4, odds:10000},
-  {id:'rfox',        name:'Ryan Fox',           tier:4, odds:10000},
-  {id:'jday',        name:'Jason Day',          tier:4, odds:10000},
-  {id:'mcnealy',     name:'Maverick McNealy',   tier:4, odds:11000},
-  {id:'arai',        name:'Aaron Rai',          tier:4, odds:11000},
-  {id:'jtposton',    name:'J.T. Poston',        tier:4, odds:12000},
-  {id:'bezuid',      name:'Christiaan Bezuidenhout', tier:4, odds:12000},
-  {id:'siwoo',       name:'Si Woo Kim',         tier:4, odds:12000},
-  {id:'bharman',     name:'Brian Harman',       tier:4, odds:12500},
+  {id:'arai',         name:'Aaron Rai',                 tier:4, odds:11000},
+  {id:'ascott',       name:'Adam Scott',                tier:4, odds:12000},
+  {id:'bgriffin',     name:'Ben Griffin',               tier:4, odds:11000},
+  {id:'bharman',      name:'Brian Harman',              tier:4, odds:10000},
+  {id:'dberger',      name:'Daniel Berger',             tier:4, odds:15000},
+  {id:'dj',           name:'Dustin Johnson',            tier:4, odds:12000},
+  {id:'greyserman',   name:'Max Greyserman',            tier:4, odds:12000},
+  {id:'henglish',     name:'Harris English',            tier:4, odds:11000},
+  {id:'homa',         name:'Max Homa',                  tier:4, odds:9000},
+  {id:'kitayama',     name:'Kurt Kitayama',             tier:4, odds:12000},
+  {id:'knapp',        name:'Jake Knapp',                tier:4, odds:12000},
+  {id:'mcnealy',      name:'Maverick McNealy',          tier:4, odds:11000},
+  {id:'noren',        name:'Alex Noren',                tier:4, odds:13000},
+  {id:'ntaylor',      name:'Nick Taylor',               tier:4, odds:13000},
+  {id:'preed',        name:'Patrick Reed',              tier:4, odds:9000},
+  {id:'rfox',         name:'Ryan Fox',                  tier:4, odds:10000},
+  {id:'rhojgaard',    name:'Rasmus Højgaard',           tier:4, odds:9000},
+  {id:'siwoo',        name:'Si Woo Kim',                tier:4, odds:12000},
   // Tier 5
-  {id:'dberger',     name:'Daniel Berger',      tier:5, odds:15000},
-  {id:'tomkim',      name:'Tom Kim',            tier:5, odds:15000},
-  {id:'ntaylor',     name:'Nick Taylor',        tier:5, odds:15000},
-  {id:'sergio',      name:'Sergio Garcia',      tier:5, odds:17500},
-  {id:'jrose',       name:'Justin Rose',        tier:5, odds:17500},
-  {id:'dj',          name:'Dustin Johnson',     tier:5, odds:20000},
-  {id:'cdavis',      name:'Cameron Davis',      tier:5, odds:20000},
-  {id:'bgriffin',    name:'Ben Griffin',        tier:5, odds:20000},
-  {id:'dthompson',   name:'Davis Thompson',     tier:5, odds:22500},
-  {id:'henglish',    name:'Harris English',     tier:5, odds:22500},
-  {id:'jaeger',      name:'Stephan Jaeger',     tier:5, odds:25000},
-  // Tier 6 (champions & amateurs)
-  {id:'couples',     name:'Fred Couples',       tier:6, odds:50000},
-  {id:'olazabal',    name:'José María Olazábal',tier:6, odds:50000},
-  {id:'langer',      name:'Bernhard Langer',    tier:6, odds:50000},
-  {id:'mweir',       name:'Mike Weir',          tier:6, odds:50000},
-  {id:'lmize',       name:'Larry Mize',         tier:6, odds:50000},
-  {id:'slyle',       name:'Sandy Lyle',         tier:6, odds:50000},
-  {id:'vsingh',      name:'Vijay Singh',        tier:6, odds:50000},
-  {id:'cabrera',     name:'Ángel Cabrera',      tier:6, odds:50000},
-  {id:'bubba',       name:'Bubba Watson',       tier:6, odds:50000},
-  {id:'zjohnson',    name:'Zach Johnson',       tier:6, odds:50000},
+  {id:'bcampbell',    name:'Brian Campbell',            tier:5, odds:20000},
+  {id:'cortiz',       name:'Carlos Ortiz',              tier:5, odds:18000},
+  {id:'driley',       name:'Davis Riley',               tier:5, odds:15000},
+  {id:'echavarria',   name:'Nicolas Echavarria',        tier:5, odds:18000},
+  {id:'gotterup',     name:'Chris Gotterup',            tier:5, odds:15000},
+  {id:'hhall',        name:'Harry Hall',                tier:5, odds:18000},
+  {id:'hli',          name:'Haotong Li',                tier:5, odds:20000},
+  {id:'jarvis',       name:'Casey Jarvis',              tier:5, odds:20000},
+  {id:'jbridgeman',   name:'Jacob Bridgeman',           tier:5, odds:25000},
+  {id:'kataoka',      name:'Naoyuki Kataoka',           tier:5, odds:25000},
+  {id:'keefer',       name:'John Keefer',               tier:5, odds:25000},
+  {id:'mbrennan',     name:'Michael Brennan',           tier:5, odds:30000},
+  {id:'mccarty',      name:'Matt McCarty',              tier:5, odds:15000},
+  {id:'mckibbin',     name:'Tom McKibbin',              tier:5, odds:15000},
+  {id:'mkim',         name:'Michael Kim',               tier:5, odds:18000},
+  {id:'neergaard',    name:'Rasmus Neergaard-Petersen', tier:5, odds:18000},
+  {id:'novak',        name:'Andrew Novak',              tier:5, odds:15000},
+  {id:'penge',        name:'Marco Penge',               tier:5, odds:18000},
+  {id:'potgieter',    name:'Aldrich Potgieter',         tier:5, odds:20000},
+  {id:'reitan',       name:'Kristoffer Reitan',         tier:5, odds:20000},
+  {id:'rgerard',      name:'Ryan Gerard',               tier:5, odds:18000},
+  {id:'sergio',       name:'Sergio García',             tier:5, odds:17500},
+  {id:'sstevens',     name:'Samuel Stevens',            tier:5, odds:18000},
+  {id:'valimaki',     name:'Sami Valimaki',             tier:5, odds:25000},
+  {id:'woodland',     name:'Gary Woodland',             tier:5, odds:18000},
+  // Tier 6 — past champions & amateurs
+  {id:'bubba',        name:'Bubba Watson',              tier:6, odds:30000},
+  {id:'cabrera',      name:'Ángel Cabrera',             tier:6, odds:60000},
+  {id:'couples',      name:'Fred Couples',              tier:6, odds:50000},
+  {id:'fang',         name:'Ethan Fang (a)',            tier:6, odds:50000},
+  {id:'herrington',   name:'Jackson Herrington (a)',    tier:6, odds:50000},
+  {id:'holtz',        name:'Brandon Holtz (a)',         tier:6, odds:50000},
+  {id:'howell',       name:'Mason Howell (a)',          tier:6, odds:50000},
+  {id:'laopakdee',    name:'Fifa Laopakdee (a)',        tier:6, odds:50000},
+  {id:'mweir',        name:'Mike Weir',                 tier:6, odds:50000},
+  {id:'olazabal',     name:'José María Olazábal',       tier:6, odds:50000},
+  {id:'pulcini',      name:'Mateo Pulcini (a)',         tier:6, odds:50000},
+  {id:'schwartzel',   name:'Charl Schwartzel',          tier:6, odds:30000},
+  {id:'vsingh',       name:'Vijay Singh',               tier:6, odds:60000},
+  {id:'willett',      name:'Danny Willett',             tier:6, odds:25000},
+  {id:'zjohnson',     name:'Zach Johnson',              tier:6, odds:50000},
 ];
 
 /* ════════════════════════════════════════════════════════════════════
@@ -885,6 +971,13 @@ function getDraftOrderForPick(pickNumber, baseOrder) {
 function totalPicks() {
   const n = Object.keys(state.players).length;
   return n * TEAM_SIZE;
+}
+
+// Display label for a player: admin-set displayName overrides login name.
+function playerLabel(playerId) {
+  const p = state.players[playerId];
+  if (!p) return '—';
+  return p.displayName || p.name || '—';
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -980,6 +1073,16 @@ function setCommissioner(playerId) {
   ROOT.child('commissioner').set(playerId);
 }
 
+function setDisplayName(playerId, name) {
+  if (!isAdmin) return;
+  const trimmed = (name || '').trim();
+  if (trimmed) {
+    ROOT.child('players/' + playerId + '/displayName').set(trimmed);
+  } else {
+    ROOT.child('players/' + playerId + '/displayName').remove();
+  }
+}
+
 function removePlayer(playerId) {
   if (!isAdmin) return;
   if (!confirm('Remove this player from the pool?')) return;
@@ -989,6 +1092,18 @@ function removePlayer(playerId) {
     const others = Object.keys(state.players).filter(id => id !== playerId);
     ROOT.child('commissioner').set(others[0] || null);
   }
+}
+
+function adminBeginDraft() {
+  if (!isAdmin) return;
+  const n = Object.keys(state.players).length;
+  if (n < 2) { alert('Need at least 2 players to start the draft.'); return; }
+  const notReady = Object.values(state.players).filter(p => !p.ready).length;
+  let msg = `Start the draft now with ${n} player${n !== 1 ? 's' : ''}?`;
+  if (notReady > 0) msg += `\n\n${notReady} player${notReady !== 1 ? "s aren't" : " isn't"} marked ready, but the draft will start anyway.`;
+  msg += '\n\nNo one else can join after this.';
+  if (!confirm(msg)) return;
+  startDraftCountdown();
 }
 
 function startDraftCountdown() {
@@ -1109,7 +1224,7 @@ function updateCountdownOverlay() {
     labelEl.textContent = 'Randomizing Draft Order';
     numEl.textContent = '';
     // Cycle through names
-    const names = Object.values(state.players).map(p => p.name);
+    const names = Object.values(state.players).map(p => p.displayName || p.name);
     const idx = Math.floor(Date.now() / 100) % names.length;
     rouletteEl.textContent = names[idx] || '';
   }
@@ -1175,23 +1290,24 @@ function renderLogin() {
 
 function renderLobby() {
   const playerList = Object.entries(state.players).sort((a, b) => (a[1].joinedAt || 0) - (b[1].joinedAt || 0));
-  const allReady = playerList.length >= 2 && playerList.every(([id, p]) => p.ready);
+  const readyCount = playerList.filter(([id, p]) => p.ready).length;
   const myReady = state.players[state.me.id]?.ready;
   const isCommish = state.me.id === state.commissioner;
+  const canStart = playerList.length >= 2;
 
   return `
     <div class="panel">
       <div class="panel-eyebrow">Pre-Draft Lobby</div>
       <div class="panel-title">Players In The Field</div>
       <p style="color:var(--ivory-dim); font-style:italic; font-family:var(--serif); margin-top:6px;">
-        ${playerList.length} player${playerList.length !== 1 ? 's' : ''} joined · waiting for everyone to be ready
+        ${playerList.length} player${playerList.length !== 1 ? 's' : ''} joined · ${readyCount} ready · waiting for the commissioner to begin
       </p>
 
       <div class="lobby-grid">
         ${playerList.map(([id, p]) => `
           <div class="lobby-player ${p.ready ? 'ready' : ''}">
             ${id === state.commissioner ? '<div class="badge">COMM</div>' : ''}
-            <div class="name">${p.name}</div>
+            <div class="name">${p.displayName || p.name}</div>
             <div class="status">${p.ready ? '✓ Ready' : 'Not Ready'}</div>
           </div>
         `).join('')}
@@ -1199,7 +1315,7 @@ function renderLobby() {
 
       <div class="ready-warning">
         <strong>Heads up:</strong> only click <em>I'm Ready</em> when you're actually ready for the draft to start.
-        Once everyone is ready, the commissioner can begin the draft and it cannot be paused.
+        The commissioner decides when to begin — the draft does not auto-start.
       </div>
 
       <div class="row-flex mt-20">
@@ -1207,8 +1323,8 @@ function renderLobby() {
           ${myReady ? 'Cancel Ready' : "I'm Ready"}
         </button>
         ${isCommish ? `
-          <button onclick="startDraftCountdown()" ${!allReady ? 'disabled' : ''}>
-            ${allReady ? 'Begin Draft' : 'Waiting For All Ready'}
+          <button onclick="commishBeginDraft()" ${!canStart ? 'disabled' : ''}>
+            ${canStart ? 'Begin Draft' : 'Need 2+ Players'}
           </button>
         ` : ''}
         <div class="ml-auto" style="font-size:11px; color:var(--ivory-faint); letter-spacing:0.1em;">
@@ -1220,23 +1336,51 @@ function renderLobby() {
   `;
 }
 
+function commishBeginDraft() {
+  const n = Object.keys(state.players).length;
+  if (n < 2) { alert('Need at least 2 players.'); return; }
+  const notReady = Object.values(state.players).filter(p => !p.ready).length;
+  let msg = `Begin the draft now with ${n} player${n !== 1 ? 's' : ''}?`;
+  if (notReady > 0) msg += `\n\n${notReady} player${notReady !== 1 ? "s aren't" : " isn't"} marked ready, but the draft will start anyway.`;
+  msg += '\n\nNo one else can join after this.';
+  if (!confirm(msg)) return;
+  startDraftCountdown();
+}
+
 function renderCommissionerControls(playerList) {
+  const draftStarted = state.status === 'drafting' || state.status === 'complete' || state.status === 'countdown';
   return `
     <div class="panel">
       <div class="panel-eyebrow">Admin Controls</div>
-      <div class="panel-title">Commissioner</div>
+      <div class="panel-title">Pool Management</div>
       <p style="color:var(--ivory-dim); font-style:italic; font-family:var(--serif); margin-top:6px;">
-        The commissioner is the only player who can begin the draft. Reassign or remove players below.
+        Set the commissioner, edit display names, remove duplicates, or force-start the draft.
+        Display names appear on the leaderboard and draft board — login names stay private.
       </p>
-      <div class="lobby-grid" style="margin-top:18px;">
+
+      ${!draftStarted ? `
+        <div class="row-flex mt-20" style="margin-bottom:18px;">
+          <button onclick="adminBeginDraft()" ${playerList.length < 2 ? 'disabled' : ''}>
+            Begin Draft Now
+          </button>
+          <span style="font-size:11px; color:var(--ivory-faint); letter-spacing:0.1em;">
+            ADMIN OVERRIDE · IGNORES READY STATUS
+          </span>
+        </div>
+      ` : ''}
+
+      <div class="admin-player-grid">
         ${playerList.map(([id, p]) => `
-          <div class="lobby-player ${id === state.commissioner ? 'ready' : ''}">
+          <div class="admin-player ${id === state.commissioner ? 'is-commish' : ''}">
             ${id === state.commissioner ? '<div class="badge">COMM</div>' : ''}
-            <div class="name">${p.name}</div>
-            <div class="status">${id === state.commissioner ? 'Current Commissioner' : 'Player'}</div>
+            <div class="login-name">LOGIN: ${p.name}</div>
+            <label class="dn-label">Display Name</label>
+            <input type="text" class="dn-input" value="${(p.displayName || '').replace(/"/g,'&quot;')}"
+                   placeholder="${p.name}"
+                   onchange="setDisplayName('${id}', this.value)" />
             <div class="row-flex" style="justify-content:center; margin-top:10px; gap:6px;">
               ${id === state.commissioner
-                ? ''
+                ? '<span class="status">Current Commissioner</span>'
                 : `<button class="secondary" style="padding:6px 10px; font-size:9px;" onclick="setCommissioner('${id}')">Make Commish</button>`}
               <button class="danger" style="padding:6px 10px; font-size:9px;" onclick="removePlayer('${id}')">Remove</button>
             </div>
@@ -1303,7 +1447,7 @@ function renderDraftTab() {
         ` : `
           <div class="on-clock">
             <div class="lbl">On The Clock</div>
-            <div class="who">${onClockPlayer?.name || '—'} ${myTurn ? '(YOU)' : ''}</div>
+            <div class="who">${playerLabel(onClockId)} ${myTurn ? '(YOU)' : ''}</div>
             <div class="timer" id="pickTimer">${PICK_TIMER}</div>
             <div style="font-size:10px; letter-spacing:0.18em; color:var(--ivory-faint); margin-top:6px;">
               PICK ${(ds.currentPick || 0) + 1} OF ${totalPicks()}
@@ -1330,7 +1474,7 @@ function renderDraftTab() {
             const ownerPick = isTaken
               ? Object.values(ds.picks || {}).find(p => p.golferId === g.id)
               : null;
-            const owner = ownerPick ? state.players[ownerPick.playerId]?.name : null;
+            const owner = ownerPick ? playerLabel(ownerPick.playerId) : null;
             return `
               <div class="golfer-row ${isTaken ? 'taken' : ''}">
                 <div class="tier">T${g.tier}</div>
@@ -1358,7 +1502,7 @@ function renderDraftTab() {
           for (let i = 0; i < Math.min(totalP, 60); i++) {
             const pick = picks[i];
             const isCurrent = !draftComplete && i === (ds.currentPick || 0);
-            const playerForSlot = pick ? state.players[pick.playerId]?.name : (state.players[getDraftOrderForPick(i, ds.order)]?.name || '—');
+            const playerForSlot = pick ? playerLabel(pick.playerId) : playerLabel(getDraftOrderForPick(i, ds.order));
             html += `
               <div class="draft-pick ${isCurrent ? 'current' : ''}">
                 <div class="num">${i + 1}.</div>
@@ -1395,7 +1539,7 @@ function renderLeaderboardTab() {
 
 function renderPoolStandings() {
   const players = Object.entries(state.players).map(([id, p]) => ({
-    id, name: p.name, total: getPlayerTotal(id)
+    id, name: playerLabel(id), total: getPlayerTotal(id)
   })).sort((a, b) => a.total - b.total);
 
   return `
@@ -1418,7 +1562,7 @@ function renderAllGolfers() {
   const picked = state.draftState?.picks || {};
   const ownerByGolfer = {};
   Object.values(picked).forEach(p => {
-    ownerByGolfer[p.golferId] = state.players[p.playerId]?.name;
+    ownerByGolfer[p.golferId] = playerLabel(p.playerId);
   });
 
   const rows = FIELD.map(g => {
@@ -1453,7 +1597,7 @@ function renderAllGolfers() {
 
 function renderByTeam() {
   const players = Object.entries(state.players).map(([id, p]) => ({
-    id, name: p.name, total: getPlayerTotal(id)
+    id, name: playerLabel(id), total: getPlayerTotal(id)
   })).sort((a, b) => a.total - b.total);
 
   return players.map(p => {
@@ -1524,7 +1668,7 @@ function renderAdminGolfer(g) {
   const mode = s.mode || 'total';
   const score = getGolferScore(g.id);
   const ownerPick = Object.values(state.draftState?.picks || {}).find(p => p.golferId === g.id);
-  const owner = ownerPick ? state.players[ownerPick.playerId]?.name : '';
+  const owner = ownerPick ? playerLabel(ownerPick.playerId) : '';
 
   return `
     <div class="admin-golfer" id="ag_${g.id}">
