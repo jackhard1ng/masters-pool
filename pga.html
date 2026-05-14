@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PGA Championship 2026 — Pool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ───────────────────── PGA Championship palette (Wanamaker) ───────────────────── */
+  :root {
+    --navy-darkest: #050a18;
+    --navy-dark:    #0a1530;
+    --navy:         #11214a;
+    --navy-light:   #1c3169;
+    --ivory:        #f3f5fb;
+    --ivory-dim:    #c5cbdc;
+    --ivory-faint:  #7a83a0;
+    --gold:         #d4a939;   /* Wanamaker brass */
+    --gold-bright:  #f1c75a;
+    --gold-dark:    #8b6f1e;
+    --silver:       #c8ccd6;
+    --red-under:    #ef4756;
+    --white-line:   rgba(243,245,251,0.10);
+    --serif-display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+    --serif: 'EB Garamond', Georgia, serif;
+    --sans:  'Inter', -apple-system, system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--navy-darkest);
+    color: var(--ivory);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse at top, rgba(28,49,105,0.55) 0%, transparent 60%),
+      linear-gradient(180deg, var(--navy-darkest) 0%, #02050d 100%);
+    background-attachment: fixed;
+  }
+
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px 80px;
+  }
+
+  /* ───────────────────── Header ───────────────────── */
+  header.masthead {
+    text-align: center;
+    padding: 48px 0 40px;
+    border-bottom: 1px solid var(--white-line);
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .crest {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .crest svg { width: 100%; height: 100%; }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 14px auto 12px;
+    max-width: 320px;
+  }
+  .ornament .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+  }
+  .ornament .dot {
+    color: var(--gold);
+    font-size: 12px;
+    line-height: 1;
+  }
+  h1.title {
+    font-family: var(--serif-display);
+    font-size: 44px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--ivory);
+    line-height: 1;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+  }
+  .subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ivory-dim);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+  .admin-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--navy-darkest);
+    background: var(--gold);
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-weight: 700;
+    margin-top: 14px;
+  }
+
+  /* ───────────────────── Buttons ───────────────────── */
+  button, .btn {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 12px 22px;
+    background: var(--gold);
+    color: var(--navy-darkest);
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+  }
+  button:hover:not(:disabled) { background: var(--gold-bright); transform: translateY(-1px); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.secondary {
+    background: transparent;
+    color: var(--ivory);
+    border: 1px solid var(--white-line);
+  }
+  button.secondary:hover:not(:disabled) {
+    background: var(--navy);
+    border-color: var(--gold);
+  }
+  button.danger { background: var(--red-under); color: var(--ivory); }
+
+  /* ───────────────────── Inputs ───────────────────── */
+  input[type=text], input[type=number], select {
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--white-line);
+    color: var(--ivory);
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus { border-color: var(--gold); }
+
+  /* ───────────────────── Cards / panels ───────────────────── */
+  .panel {
+    background: rgba(10,21,48,0.6);
+    border: 1px solid var(--white-line);
+    border-radius: 3px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .panel-title {
+    font-family: var(--serif-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ivory);
+    margin-bottom: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .panel-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+
+  /* ───────────────────── Tabs ───────────────────── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--white-line);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    background: transparent;
+    color: var(--ivory-dim);
+    padding: 14px 20px;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    letter-spacing: 0.16em;
+    font-size: 11px;
+  }
+  .tab:hover { background: transparent; color: var(--ivory); transform: none; }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ───────────────────── Leaderboard ───────────────────── */
+  .lb-toggle {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+    background: rgba(0,0,0,0.3);
+    padding: 4px;
+    border-radius: 2px;
+    width: fit-content;
+    flex-wrap: wrap;
+  }
+  .lb-toggle button {
+    padding: 9px 18px;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    background: transparent;
+    color: var(--ivory-dim);
+  }
+  .lb-toggle button.active { background: var(--gold); color: var(--navy-darkest); }
+  .lb-toggle button:hover:not(.active) { background: var(--navy); transform: none; }
+
+  .leaderboard {
+    background: var(--navy);
+    border: 1px solid var(--gold-dark);
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  }
+  .lb-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 100px;
+    padding: 12px 18px;
+    background: var(--navy-dark);
+    border-bottom: 1px solid var(--gold-dark);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 100px;
+    padding: 13px 18px;
+    border-bottom: 1px solid rgba(212,169,57,0.12);
+    align-items: center;
+    font-family: var(--serif);
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-row .pos {
+    font-family: var(--serif-display);
+    font-size: 22px;
+    color: var(--gold);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .lb-row .nm {
+    font-size: 22px;
+    color: var(--ivory);
+    font-weight: 500;
+    font-family: var(--serif);
+  }
+  .lb-row .nm small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ivory-faint);
+    margin-top: 2px;
+  }
+  .lb-row .score {
+    font-family: var(--serif-display);
+    font-size: 24px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--ivory);
+  }
+  .lb-row .score.under { color: var(--red-under); }
+
+  .cut-badge {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    background: var(--red-under);
+    color: var(--ivory);
+    padding: 2px 6px;
+    margin-left: 8px;
+    border-radius: 2px;
+    font-weight: 700;
+    vertical-align: middle;
+  }
+  .owner-tag {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* ───────────────────── By Team view ───────────────────── */
+  .team-section {
+    background: rgba(10,21,48,0.5);
+    border: 1px solid var(--white-line);
+    border-radius: 2px;
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .team-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--navy-dark);
+    border-bottom: 1px solid var(--gold-dark);
+  }
+  .team-header .teamname {
+    font-family: var(--serif-display);
+    font-size: 22px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ivory);
+  }
+  .team-header .teamtotal {
+    font-family: var(--serif-display);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ivory);
+    font-variant-numeric: tabular-nums;
+  }
+  .team-header .teamtotal.under { color: var(--red-under); }
+  .team-roster { padding: 6px 0; }
+  .team-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 90px;
+    padding: 10px 18px;
+    align-items: center;
+    font-family: var(--serif);
+  }
+  .team-row.dropped { opacity: 0.45; }
+  .team-row .pos {
+    font-family: var(--serif-display);
+    font-size: 18px;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+  .team-row .nm { font-size: 17px; color: var(--ivory); }
+  .team-row .sc {
+    text-align: right;
+    font-family: var(--serif-display);
+    font-size: 20px;
+    color: var(--ivory);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .team-row .sc.under { color: var(--red-under); }
+  .cut-line {
+    text-align: center;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 6px 0;
+    margin: 4px 18px;
+    border-top: 1px dashed rgba(212,169,57,0.4);
+    border-bottom: 1px dashed rgba(212,169,57,0.4);
+  }
+
+  /* ───────────────────── Admin score list ───────────────────── */
+  .score-list {
+    margin-top: 16px;
+    border: 1px solid var(--white-line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .score-row {
+    display: grid;
+    grid-template-columns: 1fr 110px 70px 110px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--white-line);
+    background: rgba(0,0,0,0.18);
+  }
+  .score-row:last-child { border-bottom: none; }
+  .score-row:nth-child(even) { background: rgba(0,0,0,0.30); }
+  .score-row.is-cut { opacity: 0.55; }
+  .score-row .sr-name {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ivory);
+  }
+  .score-row .sr-name small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ivory-faint);
+    margin-top: 2px;
+  }
+  .score-row .sr-input input {
+    width: 100%;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 6px;
+  }
+  .score-row .sr-display {
+    font-family: var(--serif-display);
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--ivory);
+    font-variant-numeric: tabular-nums;
+  }
+  .score-row .sr-display.under { color: var(--red-under); }
+  .score-row .sr-cut {
+    padding: 7px 10px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+  @media (max-width: 640px) {
+    .score-row {
+      grid-template-columns: 1fr 90px;
+      gap: 8px;
+    }
+    .score-row .sr-display, .score-row .sr-cut {
+      grid-column: span 1;
+    }
+  }
+
+  .info-note {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: rgba(212,169,57,0.08);
+    border: 1px solid var(--gold-dark);
+    border-left: 3px solid var(--gold);
+    border-radius: 2px;
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ivory-dim);
+    line-height: 1.55;
+  }
+  .info-note strong {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-right: 8px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--ivory-faint);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  .nav-strip {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .nav-strip a {
+    color: var(--ivory-faint);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-strip a:hover { color: var(--gold); }
+
+  /* mobile */
+  @media (max-width: 640px) {
+    h1.title { font-size: 30px; }
+    .nav-strip { position: static; margin-bottom: 12px; text-align: left; }
+    header.masthead { padding-top: 16px; }
+    .lb-row .nm { font-size: 16px; }
+    .lb-row .score { font-size: 18px; }
+    .panel { padding: 18px; }
+    .team-header .teamname { font-size: 18px; }
+    .team-header .teamtotal { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="masthead">
+    <div class="nav-strip"><a href="index.html">← Masters Pool</a></div>
+    <div class="crest">
+      <!-- Wanamaker-inspired trophy crest -->
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f1c75a"/>
+            <stop offset="50%" stop-color="#d4a939"/>
+            <stop offset="100%" stop-color="#8b6f1e"/>
+          </linearGradient>
+          <radialGradient id="bowlShine" cx="0.35" cy="0.3" r="0.6">
+            <stop offset="0%" stop-color="#fff3c8" stop-opacity="0.8"/>
+            <stop offset="60%" stop-color="#d4a939" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- Outer ring -->
+        <circle cx="100" cy="100" r="92" fill="none" stroke="url(#brass)" stroke-width="2"/>
+        <circle cx="100" cy="100" r="86" fill="none" stroke="#d4a939" stroke-width="0.5" opacity="0.5"/>
+        <!-- Trophy bowl -->
+        <path d="M 60 70 Q 60 110 100 118 Q 140 110 140 70 Z" fill="url(#brass)" stroke="#8b6f1e" stroke-width="1.2"/>
+        <path d="M 60 70 Q 60 110 100 118 Q 140 110 140 70 Z" fill="url(#bowlShine)"/>
+        <!-- Bowl rim -->
+        <ellipse cx="100" cy="70" rx="40" ry="6" fill="#f1c75a" stroke="#8b6f1e" stroke-width="1"/>
+        <ellipse cx="100" cy="70" rx="34" ry="3" fill="#8b6f1e" opacity="0.4"/>
+        <!-- Handles -->
+        <path d="M 60 76 Q 42 80 42 96 Q 42 110 56 108" fill="none" stroke="url(#brass)" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M 140 76 Q 158 80 158 96 Q 158 110 144 108" fill="none" stroke="url(#brass)" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- Stem & base -->
+        <rect x="92" y="118" width="16" height="14" fill="url(#brass)" stroke="#8b6f1e" stroke-width="0.8"/>
+        <ellipse cx="100" cy="134" rx="22" ry="4" fill="#f1c75a" stroke="#8b6f1e" stroke-width="0.8"/>
+        <rect x="72" y="138" width="56" height="10" fill="url(#brass)" stroke="#8b6f1e" stroke-width="0.8"/>
+        <rect x="68" y="148" width="64" height="6" fill="#8b6f1e"/>
+        <!-- PGA monogram on bowl -->
+        <text x="100" y="98" text-anchor="middle" font-family="Cinzel, serif" font-size="16" font-weight="700" fill="#050a18" letter-spacing="1">PGA</text>
+        <!-- Top ornament -->
+        <circle cx="100" cy="66" r="3" fill="#f1c75a" stroke="#8b6f1e" stroke-width="0.6"/>
+      </svg>
+    </div>
+    <div class="eyebrow">Glory's Last Shot</div>
+    <h1 class="title">PGA Championship</h1>
+    <div class="ornament">
+      <div class="line"></div>
+      <div class="dot">◆</div>
+      <div class="line"></div>
+    </div>
+    <div class="subtitle">Pool Standings · MMXXVI</div>
+    <div id="adminBadgeSlot"></div>
+  </header>
+
+  <div id="content"></div>
+</div>
+
+<!-- Firebase compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   FIREBASE  (same project as Masters; separate root path)
+═══════════════════════════════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCyQmBjc1MA9vutjMbnhmlqR2tNbJMNk5U",
+  authDomain: "masters-pool-ff3c8.firebaseapp.com",
+  databaseURL: "https://masters-pool-ff3c8-default-rtdb.firebaseio.com",
+  projectId: "masters-pool-ff3c8",
+  storageBucket: "masters-pool-ff3c8.firebasestorage.app",
+  messagingSenderId: "694699462231",
+  appId: "1:694699462231:web:f74f47748d161119411d12",
+  measurementId: "G-6SXFWHZ8LP"
+};
+firebase.initializeApp(firebaseConfig);
+const db   = firebase.database();
+const ROOT = db.ref('pga/2026');
+
+/* ════════════════════════════════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════════════════════════════════ */
+const ADMIN_KEY = 'pga2026';
+const MISSED_CUT_SCORE = 20;   // same penalty as Masters pool
+const BEST_N = 4;              // best 4 of 6 count
+
+const isAdmin = new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
+
+/* ────────── Golfer field (only golfers drafted across the 4 teams) ────────── */
+const GOLFERS = [
+  // Braxton
+  { id:'mcilroy',     name:'Rory McIlroy' },
+  { id:'rahm',        name:'Jon Rahm' },
+  { id:'fitzpatrick', name:'Matt Fitzpatrick' },
+  { id:'fleetwood',   name:'Tommy Fleetwood' },
+  { id:'morikawa',    name:'Collin Morikawa' },
+  { id:'spaun',       name:'J.J. Spaun' },
+  // David
+  { id:'cyoung',      name:'Cameron Young' },
+  { id:'schauffele',  name:'Xander Schauffele' },
+  { id:'jthomas',     name:'Justin Thomas' },
+  { id:'preed',       name:'Patrick Reed' },
+  { id:'henglish',    name:'Harris English' },
+  { id:'cantlay',     name:'Patrick Cantlay' },
+  // Gaige
+  { id:'scheffler',   name:'Scottie Scheffler' },
+  { id:'koepka',      name:'Brooks Koepka' },
+  { id:'fowler',      name:'Rickie Fowler' },
+  { id:'sburns',      name:'Sam Burns' },
+  { id:'henley',      name:'Russell Henley' },
+  { id:'spieth',      name:'Jordan Spieth' },
+  // Jack
+  { id:'dechambeau',  name:'Bryson DeChambeau' },
+  { id:'aberg',       name:'Ludvig Åberg' },
+  { id:'jrose',       name:'Justin Rose' },
+  { id:'hatton',      name:'Tyrrell Hatton' },
+  { id:'gotterup',    name:'Chris Gotterup' },
+  { id:'hovland',     name:'Viktor Hovland' },
+];
+
+/* ────────── Teams (fixed; no draft) ────────── */
+const TEAMS = [
+  { id:'braxton', name:'Braxton', golfers:['mcilroy','rahm','fitzpatrick','fleetwood','morikawa','spaun'] },
+  { id:'david',   name:'David',   golfers:['cyoung','schauffele','jthomas','preed','henglish','cantlay'] },
+  { id:'gaige',   name:'Gaige',   golfers:['scheffler','koepka','fowler','sburns','henley','spieth'] },
+  { id:'jack',    name:'Jack',    golfers:['dechambeau','aberg','jrose','hatton','gotterup','hovland'] },
+];
+
+/* ════════════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════════════ */
+let state = {
+  scores: {},   // {golferId: {total, cut}}
+  tab: 'leaderboard',
+  lbView: 'pool',
+};
+
+/* ════════════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════════════ */
+function fmtToPar(n) {
+  if (n === 0) return 'E';
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  if (n > 0) return '+' + n;
+  return String(n);
+}
+function golferById(id) { return GOLFERS.find(g => g.id === id); }
+
+function getGolferScore(golferId) {
+  const s = state.scores[golferId];
+  if (!s) return null;
+  if (s.cut) return MISSED_CUT_SCORE;
+  if (typeof s.total === 'number') return s.total;
+  return null;
+}
+
+function getTeamTotal(team) {
+  const scores = team.golfers.map(g => {
+    const sc = getGolferScore(g);
+    return sc === null ? 0 : sc;
+  });
+  scores.sort((a, b) => a - b);
+  return scores.slice(0, BEST_N).reduce((a, b) => a + b, 0);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════════════════════════ */
+function render() {
+  if (isAdmin) {
+    document.getElementById('adminBadgeSlot').innerHTML =
+      '<div class="admin-badge">Admin Mode</div>';
+  }
+
+  const root = document.getElementById('content');
+  let tabs = `
+    <div class="tabs">
+      <button class="tab ${state.tab === 'leaderboard' ? 'active' : ''}"
+              onclick="state.tab='leaderboard';render()">Leaderboard</button>
+      ${isAdmin ? `
+        <button class="tab ${state.tab === 'admin' ? 'active' : ''}"
+                onclick="state.tab='admin';render()">Score Entry</button>
+      ` : ''}
+    </div>
+  `;
+  if (state.tab === 'admin' && isAdmin) {
+    root.innerHTML = tabs + renderAdminTab();
+  } else {
+    root.innerHTML = tabs + renderLeaderboardTab();
+  }
+}
+
+function renderLeaderboardTab() {
+  return `
+    <div class="lb-toggle">
+      <button class="${state.lbView === 'pool' ? 'active' : ''}"
+              onclick="state.lbView='pool';render()">Pool Standings</button>
+      <button class="${state.lbView === 'golfers' ? 'active' : ''}"
+              onclick="state.lbView='golfers';render()">All Golfers</button>
+      <button class="${state.lbView === 'teams' ? 'active' : ''}"
+              onclick="state.lbView='teams';render()">By Team</button>
+    </div>
+    ${state.lbView === 'pool' ? renderPoolStandings() : ''}
+    ${state.lbView === 'golfers' ? renderAllGolfers() : ''}
+    ${state.lbView === 'teams' ? renderByTeam() : ''}
+    <div class="info-note">
+      <strong>Scoring</strong>
+      Each team's score is the sum of their best ${BEST_N} of 6 golfers' final score to par.
+      A missed cut counts as <em>+${MISSED_CUT_SCORE}</em>.
+    </div>
+  `;
+}
+
+function renderPoolStandings() {
+  const rows = TEAMS.map(t => ({
+    id: t.id, name: t.name, total: getTeamTotal(t)
+  })).sort((a, b) => a.total - b.total);
+
+  return `
+    <div class="leaderboard">
+      <div class="lb-header">
+        <div>POS</div><div>TEAM</div><div style="text-align:right;">TO PAR</div>
+      </div>
+      ${rows.map((p, i) => `
+        <div class="lb-row">
+          <div class="pos">${i + 1}</div>
+          <div class="nm">${p.name}</div>
+          <div class="score ${p.total < 0 ? 'under' : ''}">${fmtToPar(p.total)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderAllGolfers() {
+  const ownerByGolfer = {};
+  TEAMS.forEach(t => t.golfers.forEach(g => { ownerByGolfer[g] = t.name; }));
+
+  const rows = GOLFERS.map(g => {
+    const sc = getGolferScore(g.id);
+    return {
+      ...g,
+      score: sc,
+      cut: state.scores[g.id]?.cut,
+      owner: ownerByGolfer[g.id],
+    };
+  }).sort((a, b) => {
+    const sa = a.score === null ? 999 : a.score;
+    const sb = b.score === null ? 999 : b.score;
+    return sa - sb;
+  });
+
+  return `
+    <div class="leaderboard">
+      <div class="lb-header">
+        <div>POS</div><div>GOLFER</div><div style="text-align:right;">TO PAR</div>
+      </div>
+      ${rows.map((g, i) => `
+        <div class="lb-row">
+          <div class="pos">${g.score === null ? '—' : i + 1}</div>
+          <div class="nm">
+            ${g.name}${g.cut ? '<span class="cut-badge">CUT</span>' : ''}
+            ${g.owner ? `<small><span class="owner-tag">${g.owner}</span></small>` : ''}
+          </div>
+          <div class="score ${g.score !== null && g.score < 0 ? 'under' : ''}">${g.score === null ? '—' : fmtToPar(g.score)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderByTeam() {
+  const sorted = TEAMS.map(t => ({ ...t, total: getTeamTotal(t) }))
+                      .sort((a, b) => a.total - b.total);
+
+  return sorted.map(t => {
+    const golfers = t.golfers.map(gid => {
+      const g = golferById(gid);
+      const sc = getGolferScore(gid);
+      const cut = state.scores[gid]?.cut;
+      return {
+        id: gid,
+        name: g?.name || '?',
+        score: sc === null ? 0 : sc,
+        rawScore: sc,
+        cut,
+      };
+    }).sort((a, b) => a.score - b.score);
+
+    return `
+      <div class="team-section">
+        <div class="team-header">
+          <div class="teamname">${t.name}</div>
+          <div class="teamtotal ${t.total < 0 ? 'under' : ''}">${fmtToPar(t.total)}</div>
+        </div>
+        <div class="team-roster">
+          ${golfers.map((g, i) => {
+            const row = renderTeamRow(g, i);
+            if (i === BEST_N) {
+              return `<div class="cut-line">── BEST ${BEST_N} CUT LINE ──</div>` + row;
+            }
+            return row;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTeamRow(g, i) {
+  const dropped = i >= BEST_N;
+  return `
+    <div class="team-row ${dropped ? 'dropped' : ''}">
+      <div class="pos">${i + 1}</div>
+      <div class="nm">
+        ${g.name}${g.cut ? '<span class="cut-badge">CUT</span>' : ''}
+        ${dropped ? ' <small style="font-size:9px;letter-spacing:0.1em;color:var(--ivory-faint);">DROPPED</small>' : ''}
+      </div>
+      <div class="sc ${g.rawScore !== null && g.rawScore < 0 ? 'under' : ''}">${g.rawScore === null ? '—' : fmtToPar(g.rawScore)}</div>
+    </div>
+  `;
+}
+
+/* ──────── ADMIN TAB ──────── */
+function renderAdminTab() {
+  const ownerByGolfer = {};
+  TEAMS.forEach(t => t.golfers.forEach(g => { ownerByGolfer[g] = t.name; }));
+
+  return `
+    <div class="panel">
+      <div class="panel-eyebrow">Score Entry</div>
+      <div class="panel-title">Admin Console</div>
+      <p style="color:var(--ivory-dim); font-style:italic; font-family:var(--serif); margin-top:6px;">
+        Type each golfer's current score to par (negative for under, e.g. <em>-7</em>). Updates push live.
+      </p>
+      <div class="score-list">
+        ${GOLFERS.map(g => renderAdminScoreRow(g, ownerByGolfer[g.id])).join('')}
+      </div>
+      <div class="info-note" style="margin-top:18px;">
+        <strong>Tip</strong>
+        Use <em>Mark Cut</em> for golfers who miss the cut — they automatically score +${MISSED_CUT_SCORE}.
+      </div>
+    </div>
+  `;
+}
+
+function renderAdminScoreRow(g, owner) {
+  const s = state.scores[g.id] || {};
+  const score = getGolferScore(g.id);
+  const inputVal = typeof s.total === 'number' && !s.cut ? s.total : '';
+
+  return `
+    <div class="score-row ${s.cut ? 'is-cut' : ''}">
+      <div class="sr-name">
+        ${g.name}
+        <small>OWNED BY ${owner || '—'}${s.cut ? ' · CUT' : ''}</small>
+      </div>
+      <div class="sr-input">
+        <input type="number" id="sc_${g.id}" value="${inputVal}" placeholder="—"
+               ${s.cut ? 'disabled' : ''}
+               onchange="setTotalScore('${g.id}', this.value)" />
+      </div>
+      <div class="sr-display ${score !== null && score < 0 ? 'under' : ''}">
+        ${score === null ? '—' : fmtToPar(score)}
+      </div>
+      <button class="secondary sr-cut" onclick="toggleCut('${g.id}')">${s.cut ? 'Restore' : 'Mark Cut'}</button>
+    </div>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   ADMIN ACTIONS
+═══════════════════════════════════════════════════════════════════════ */
+function setTotalScore(golferId, raw) {
+  if (!isAdmin) return;
+  const ref = ROOT.child('scores').child(golferId);
+  if (raw === '' || raw === null || raw === undefined) {
+    ref.child('total').remove();
+    return;
+  }
+  const n = parseInt(raw, 10);
+  if (isNaN(n)) return;
+  ref.update({ total: n, cut: false });
+}
+
+function toggleCut(golferId) {
+  if (!isAdmin) return;
+  const cur = state.scores[golferId] || {};
+  ROOT.child('scores').child(golferId).update({ cut: !cur.cut });
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   FIREBASE LISTENER
+═══════════════════════════════════════════════════════════════════════ */
+ROOT.child('scores').on('value', snap => {
+  state.scores = snap.val() || {};
+  render();
+});
+
+// initial paint (before first snapshot)
+render();
+</script>
+
+</body>
+</html>
