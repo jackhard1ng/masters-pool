@@ -397,7 +397,7 @@
   }
   .score-row {
     display: grid;
-    grid-template-columns: 1fr 110px 70px 110px;
+    grid-template-columns: 1fr 170px 70px 110px;
     gap: 12px;
     align-items: center;
     padding: 12px 16px;
@@ -421,14 +421,44 @@
     color: var(--ivory-faint);
     margin-top: 2px;
   }
+  .score-row .sr-input {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+  }
   .score-row .sr-input input {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
+    width: auto;
     text-align: center;
     font-family: var(--serif);
     font-size: 16px;
     font-weight: 600;
-    padding: 8px 6px;
+    padding: 8px 4px;
   }
+  .stepper-btn {
+    width: 38px;
+    min-width: 38px;
+    padding: 0;
+    font-family: var(--sans);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0;
+    background: var(--navy);
+    color: var(--gold);
+    border: 1px solid var(--white-line);
+    border-radius: 2px;
+    line-height: 1;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .stepper-btn:hover:not(:disabled) {
+    background: var(--navy-light);
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: none;
+  }
+  .stepper-btn:active:not(:disabled) { background: var(--gold); color: var(--navy-darkest); }
   .score-row .sr-display {
     font-family: var(--serif-display);
     font-size: 22px;
@@ -445,12 +475,13 @@
   }
   @media (max-width: 640px) {
     .score-row {
-      grid-template-columns: 1fr 90px;
-      gap: 8px;
+      grid-template-columns: 1fr 160px;
+      gap: 8px 10px;
     }
     .score-row .sr-display, .score-row .sr-cut {
       grid-column: span 1;
     }
+    .stepper-btn { width: 36px; min-width: 36px; font-size: 18px; }
   }
 
   .info-note {
@@ -881,9 +912,13 @@ function renderAdminScoreRow(g, owner) {
         <small>OWNED BY ${owner || '—'}${s.cut ? ' · CUT' : ''}</small>
       </div>
       <div class="sr-input">
-        <input type="number" id="sc_${g.id}" value="${inputVal}" placeholder="—"
+        <button class="stepper-btn" type="button" ${s.cut ? 'disabled' : ''}
+                onclick="adjustScore('${g.id}', -1)" aria-label="Decrease">−</button>
+        <input type="number" inputmode="numeric" id="sc_${g.id}" value="${inputVal}" placeholder="—"
                ${s.cut ? 'disabled' : ''}
                onchange="setTotalScore('${g.id}', this.value)" />
+        <button class="stepper-btn" type="button" ${s.cut ? 'disabled' : ''}
+                onclick="adjustScore('${g.id}', 1)" aria-label="Increase">+</button>
       </div>
       <div class="sr-display ${score !== null && score < 0 ? 'under' : ''}">
         ${score === null ? '—' : fmtToPar(score)}
@@ -912,6 +947,14 @@ function toggleCut(golferId) {
   if (!isAdmin) return;
   const cur = state.scores[golferId] || {};
   ROOT.child('scores').child(golferId).update({ cut: !cur.cut });
+}
+
+function adjustScore(golferId, delta) {
+  if (!isAdmin) return;
+  const cur = state.scores[golferId] || {};
+  if (cur.cut) return;
+  const base = (typeof cur.total === 'number') ? cur.total : 0;
+  setTotalScore(golferId, base + delta);
 }
 
 /* ════════════════════════════════════════════════════════════════════
