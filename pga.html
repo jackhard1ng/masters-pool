@@ -668,12 +668,15 @@ function getGolferScore(golferId) {
 }
 
 function getTeamTotal(team) {
-  const scores = team.golfers.map(g => {
-    const sc = getGolferScore(g);
-    return sc === null ? 0 : sc;
-  });
-  scores.sort((a, b) => a - b);
-  return scores.slice(0, BEST_N).reduce((a, b) => a + b, 0);
+  // Only count golfers who have a posted score. Take best N of those (or all
+  // scored if fewer than N have scores yet) so the running total reflects
+  // actual play instead of treating un-entered golfers as even par.
+  const scored = team.golfers
+    .map(g => getGolferScore(g))
+    .filter(sc => sc !== null)
+    .sort((a, b) => a - b);
+  if (scored.length === 0) return null;
+  return scored.slice(0, BEST_N).reduce((a, b) => a + b, 0);
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -718,7 +721,8 @@ function renderLeaderboardTab() {
     ${state.lbView === 'teams' ? renderByTeam() : ''}
     <div class="info-note">
       <strong>Scoring</strong>
-      Each team's score is the sum of their best ${BEST_N} of 6 golfers' final score to par.
+      Each team's score is the sum of their best ${BEST_N} of 6 golfers' score to par
+      (only golfers with a posted score count toward the running total).
       A missed cut counts as <em>+${MISSED_CUT_SCORE}</em>.
     </div>
   `;
@@ -727,7 +731,11 @@ function renderLeaderboardTab() {
 function renderPoolStandings() {
   const rows = TEAMS.map(t => ({
     id: t.id, name: t.name, total: getTeamTotal(t)
-  })).sort((a, b) => a.total - b.total);
+  })).sort((a, b) => {
+    const sa = a.total === null ? 9999 : a.total;
+    const sb = b.total === null ? 9999 : b.total;
+    return sa - sb;
+  });
 
   return `
     <div class="leaderboard">
@@ -736,9 +744,9 @@ function renderPoolStandings() {
       </div>
       ${rows.map((p, i) => `
         <div class="lb-row">
-          <div class="pos">${i + 1}</div>
+          <div class="pos">${p.total === null ? '—' : i + 1}</div>
           <div class="nm">${p.name}</div>
-          <div class="score ${p.total < 0 ? 'under' : ''}">${fmtToPar(p.total)}</div>
+          <div class="score ${p.total !== null && p.total < 0 ? 'under' : ''}">${p.total === null ? '—' : fmtToPar(p.total)}</div>
         </div>
       `).join('')}
     </div>
@@ -784,7 +792,11 @@ function renderAllGolfers() {
 
 function renderByTeam() {
   const sorted = TEAMS.map(t => ({ ...t, total: getTeamTotal(t) }))
-                      .sort((a, b) => a.total - b.total);
+                      .sort((a, b) => {
+                        const sa = a.total === null ? 9999 : a.total;
+                        const sb = b.total === null ? 9999 : b.total;
+                        return sa - sb;
+                      });
 
   return sorted.map(t => {
     const golfers = t.golfers.map(gid => {
@@ -794,7 +806,7 @@ function renderByTeam() {
       return {
         id: gid,
         name: g?.name || '?',
-        score: sc === null ? 0 : sc,
+        score: sc === null ? 9999 : sc,
         rawScore: sc,
         cut,
       };
@@ -804,7 +816,7 @@ function renderByTeam() {
       <div class="team-section">
         <div class="team-header">
           <div class="teamname">${t.name}</div>
-          <div class="teamtotal ${t.total < 0 ? 'under' : ''}">${fmtToPar(t.total)}</div>
+          <div class="teamtotal ${t.total !== null && t.total < 0 ? 'under' : ''}">${t.total === null ? '—' : fmtToPar(t.total)}</div>
         </div>
         <div class="team-roster">
           ${golfers.map((g, i) => {
